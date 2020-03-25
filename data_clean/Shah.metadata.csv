@@ -1,0 +1,17 @@
+sampID,mouse,cell,status
+Lu01,1,WT,Uninfected
+Lu02,1,WT,Infected
+Lu03,2,WT,Uninfected
+Lu04,2,WT,Infected
+Lu05,3,WT,Uninfected
+Lu06,3,WT,Infected
+Lu07,4,WT,Uninfected
+Lu08,4,WT,Infected
+Lu09,1,TKO,Uninfected
+Lu10,1,TKO,Infected
+Lu11,2,TKO,Uninfected
+Lu12,2,TKO,Infected
+Lu13,3,TKO,Uninfected
+Lu14,3,TKO,Infected
+Lu15,4,TKO,Uninfected
+Lu16,4,TKO,Infected
