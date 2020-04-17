@@ -1,0 +1,224 @@
+/home/ec2-user/genomics/results/bam/Lu01_Aligned.sortedByCoord.out.bam
+51331763 + 1077365 in total (QC-passed reads + QC-failed reads)
+7857159 + 184900 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+51331763 + 1077365 mapped (100.00% : 100.00%)
+43474604 + 892465 paired in sequencing
+21741135 + 446683 read1
+21733469 + 445782 read2
+43462106 + 888796 properly paired (99.97% : 99.59%)
+43462106 + 888796 with itself and mate mapped
+12498 + 3669 singletons (0.03% : 0.41%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu02_Aligned.sortedByCoord.out.bam
+52055700 + 1122225 in total (QC-passed reads + QC-failed reads)
+7757355 + 186945 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+52055700 + 1122225 mapped (100.00% : 100.00%)
+44298345 + 935280 paired in sequencing
+22152877 + 467893 read1
+22145468 + 467387 read2
+44286284 + 931722 properly paired (99.97% : 99.62%)
+44286284 + 931722 with itself and mate mapped
+12061 + 3558 singletons (0.03% : 0.38%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu03_Aligned.sortedByCoord.out.bam
+42069811 + 862148 in total (QC-passed reads + QC-failed reads)
+6374041 + 147525 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+42069811 + 862148 mapped (100.00% : 100.00%)
+35695770 + 714623 paired in sequencing
+17852476 + 358010 read1
+17843294 + 356613 read2
+35682772 + 711292 properly paired (99.96% : 99.53%)
+35682772 + 711292 with itself and mate mapped
+12998 + 3331 singletons (0.04% : 0.47%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu04_Aligned.sortedByCoord.out.bam
+48517817 + 1027879 in total (QC-passed reads + QC-failed reads)
+7381505 + 173944 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+48517817 + 1027879 mapped (100.00% : 100.00%)
+41136312 + 853935 paired in sequencing
+20572299 + 427458 read1
+20564013 + 426477 read2
+41123724 + 850458 properly paired (99.97% : 99.59%)
+41123724 + 850458 with itself and mate mapped
+12588 + 3477 singletons (0.03% : 0.41%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu05_Aligned.sortedByCoord.out.bam
+54821862 + 1189159 in total (QC-passed reads + QC-failed reads)
+8269420 + 198124 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+54821862 + 1189159 mapped (100.00% : 100.00%)
+46552442 + 991035 paired in sequencing
+23280084 + 495865 read1
+23272358 + 495170 read2
+46539824 + 987244 properly paired (99.97% : 99.62%)
+46539824 + 987244 with itself and mate mapped
+12618 + 3791 singletons (0.03% : 0.38%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu06_Aligned.sortedByCoord.out.bam
+47401870 + 1066485 in total (QC-passed reads + QC-failed reads)
+7155274 + 179602 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+47401870 + 1066485 mapped (100.00% : 100.00%)
+40246596 + 886883 paired in sequencing
+20126807 + 443784 read1
+20119789 + 443099 read2
+40234940 + 883404 properly paired (99.97% : 99.61%)
+40234940 + 883404 with itself and mate mapped
+11656 + 3479 singletons (0.03% : 0.39%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu07_Aligned.sortedByCoord.out.bam
+55439425 + 1223375 in total (QC-passed reads + QC-failed reads)
+8424252 + 206212 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+55439425 + 1223375 mapped (100.00% : 100.00%)
+47015173 + 1017163 paired in sequencing
+23510773 + 508752 read1
+23504400 + 508411 read2
+47004096 + 1013558 properly paired (99.98% : 99.65%)
+47004096 + 1013558 with itself and mate mapped
+11077 + 3605 singletons (0.02% : 0.35%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu08_Aligned.sortedByCoord.out.bam
+48706359 + 1079013 in total (QC-passed reads + QC-failed reads)
+7291045 + 181474 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+48706359 + 1079013 mapped (100.00% : 100.00%)
+41415314 + 897539 paired in sequencing
+20711847 + 449193 read1
+20703467 + 448346 read2
+41402482 + 894012 properly paired (99.97% : 99.61%)
+41402482 + 894012 with itself and mate mapped
+12832 + 3527 singletons (0.03% : 0.39%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu09_Aligned.sortedByCoord.out.bam
+58278727 + 1305625 in total (QC-passed reads + QC-failed reads)
+9213647 + 227219 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+58278727 + 1305625 mapped (100.00% : 100.00%)
+49065080 + 1078406 paired in sequencing
+24535549 + 539430 read1
+24529531 + 538976 read2
+49053458 + 1074280 properly paired (99.98% : 99.62%)
+49053458 + 1074280 with itself and mate mapped
+11622 + 4126 singletons (0.02% : 0.38%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu10_Aligned.sortedByCoord.out.bam
+56272552 + 1213136 in total (QC-passed reads + QC-failed reads)
+8833456 + 210829 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+56272552 + 1213136 mapped (100.00% : 100.00%)
+47439096 + 1002307 paired in sequencing
+23723137 + 501490 read1
+23715959 + 500817 read2
+47426284 + 998362 properly paired (99.97% : 99.61%)
+47426284 + 998362 with itself and mate mapped
+12812 + 3945 singletons (0.03% : 0.39%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu11_Aligned.sortedByCoord.out.bam
+54321599 + 1191116 in total (QC-passed reads + QC-failed reads)
+8631390 + 211747 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+54321599 + 1191116 mapped (100.00% : 100.00%)
+45690209 + 979369 paired in sequencing
+22849196 + 490149 read1
+22841013 + 489220 read2
+45676694 + 975662 properly paired (99.97% : 99.62%)
+45676694 + 975662 with itself and mate mapped
+13515 + 3707 singletons (0.03% : 0.38%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu12_Aligned.sortedByCoord.out.bam
+56108676 + 1216625 in total (QC-passed reads + QC-failed reads)
+9331605 + 225978 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+56108676 + 1216625 mapped (100.00% : 100.00%)
+46777071 + 990647 paired in sequencing
+23392161 + 495703 read1
+23384910 + 494944 read2
+46763514 + 986954 properly paired (99.97% : 99.63%)
+46763514 + 986954 with itself and mate mapped
+13557 + 3693 singletons (0.03% : 0.37%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu13_Aligned.sortedByCoord.out.bam
+58050540 + 1274128 in total (QC-passed reads + QC-failed reads)
+8992295 + 219138 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+58050540 + 1274128 mapped (100.00% : 100.00%)
+49058245 + 1054990 paired in sequencing
+24533169 + 527847 read1
+24525076 + 527143 read2
+49044844 + 1051092 properly paired (99.97% : 99.63%)
+49044844 + 1051092 with itself and mate mapped
+13401 + 3898 singletons (0.03% : 0.37%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu14_Aligned.sortedByCoord.out.bam
+55547295 + 1226905 in total (QC-passed reads + QC-failed reads)
+8690539 + 215083 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+55547295 + 1226905 mapped (100.00% : 100.00%)
+46856756 + 1011822 paired in sequencing
+23432653 + 506306 read1
+23424103 + 505516 read2
+46843240 + 1007892 properly paired (99.97% : 99.61%)
+46843240 + 1007892 with itself and mate mapped
+13516 + 3930 singletons (0.03% : 0.39%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu15_Aligned.sortedByCoord.out.bam
+54212209 + 1124754 in total (QC-passed reads + QC-failed reads)
+8360773 + 193900 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+54212209 + 1124754 mapped (100.00% : 100.00%)
+45851436 + 930854 paired in sequencing
+22930248 + 466036 read1
+22921188 + 464818 read2
+45837986 + 927066 properly paired (99.97% : 99.59%)
+45837986 + 927066 with itself and mate mapped
+13450 + 3788 singletons (0.03% : 0.41%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+/home/ec2-user/genomics/results/bam/Lu16_Aligned.sortedByCoord.out.bam
+58985412 + 1364712 in total (QC-passed reads + QC-failed reads)
+9237377 + 238018 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+58985412 + 1364712 mapped (100.00% : 100.00%)
+49748035 + 1126694 paired in sequencing
+24877222 + 563441 read1
+24870813 + 563253 read2
+49736192 + 1122688 properly paired (99.98% : 99.64%)
+49736192 + 1122688 with itself and mate mapped
+11843 + 4006 singletons (0.02% : 0.36%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
