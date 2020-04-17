@@ -252,6 +252,20 @@ ggplot(aes(x=AveExpr, y=logFC, color=col.group)) +
   guides(color=guide_legend(nrow=3, byrow=TRUE))
 ```
 
+Highlight genes most significant for interaction term.
+
+```{r echo=FALSE}
+get(gene.result.name) %>% 
+  filter(adj.P.Val <= 0.5 & group == "status:cell") %>% 
+  dplyr::select(geneName, logFC, AveExpr, adj.P.Val, group) %>%
+  arrange(adj.P.Val) %>% 
+  
+  kable(align=c("l","c","c","c","c")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+
+
 ## Gene plots
 
 Create expression plots of genes with at least one variable FDR < `r gene.fdr.cutoff`. Save in `figs/gene_level`
