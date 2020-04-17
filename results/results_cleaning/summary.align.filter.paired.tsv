@@ -1,0 +1,224 @@
+genomics/results/bam_filter_paired/Lu01_filter_paired.bam
+39223980 + 792084 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+39223980 + 792084 mapped (100.00% : 100.00%)
+39223980 + 792084 paired in sequencing
+19611990 + 396042 read1
+19611990 + 396042 read2
+39223980 + 792084 properly paired (100.00% : 100.00%)
+39223980 + 792084 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu02_filter_paired.bam
+40084072 + 833318 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+40084072 + 833318 mapped (100.00% : 100.00%)
+40084072 + 833318 paired in sequencing
+20042036 + 416659 read1
+20042036 + 416659 read2
+40084072 + 833318 properly paired (100.00% : 100.00%)
+40084072 + 833318 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu03_filter_paired.bam
+32128250 + 631762 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+32128250 + 631762 mapped (100.00% : 100.00%)
+32128250 + 631762 paired in sequencing
+16064125 + 315881 read1
+16064125 + 315881 read2
+32128250 + 631762 properly paired (100.00% : 100.00%)
+32128250 + 631762 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu04_filter_paired.bam
+37010084 + 755658 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+37010084 + 755658 mapped (100.00% : 100.00%)
+37010084 + 755658 paired in sequencing
+18505042 + 377829 read1
+18505042 + 377829 read2
+37010084 + 755658 properly paired (100.00% : 100.00%)
+37010084 + 755658 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu05_filter_paired.bam
+42034110 + 882162 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+42034110 + 882162 mapped (100.00% : 100.00%)
+42034110 + 882162 paired in sequencing
+21017055 + 441081 read1
+21017055 + 441081 read2
+42034110 + 882162 properly paired (100.00% : 100.00%)
+42034110 + 882162 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu06_filter_paired.bam
+36299552 + 787170 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+36299552 + 787170 mapped (100.00% : 100.00%)
+36299552 + 787170 paired in sequencing
+18149776 + 393585 read1
+18149776 + 393585 read2
+36299552 + 787170 properly paired (100.00% : 100.00%)
+36299552 + 787170 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu07_filter_paired.bam
+42471216 + 904640 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+42471216 + 904640 mapped (100.00% : 100.00%)
+42471216 + 904640 paired in sequencing
+21235608 + 452320 read1
+21235608 + 452320 read2
+42471216 + 904640 properly paired (100.00% : 100.00%)
+42471216 + 904640 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu08_filter_paired.bam
+37438020 + 797738 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+37438020 + 797738 mapped (100.00% : 100.00%)
+37438020 + 797738 paired in sequencing
+18719010 + 398869 read1
+18719010 + 398869 read2
+37438020 + 797738 properly paired (100.00% : 100.00%)
+37438020 + 797738 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu09_filter_paired.bam
+43947788 + 950800 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+43947788 + 950800 mapped (100.00% : 100.00%)
+43947788 + 950800 paired in sequencing
+21973894 + 475400 read1
+21973894 + 475400 read2
+43947788 + 950800 properly paired (100.00% : 100.00%)
+43947788 + 950800 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu10_filter_paired.bam
+42533722 + 884818 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+42533722 + 884818 mapped (100.00% : 100.00%)
+42533722 + 884818 paired in sequencing
+21266861 + 442409 read1
+21266861 + 442409 read2
+42533722 + 884818 properly paired (100.00% : 100.00%)
+42533722 + 884818 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu11_filter_paired.bam
+40834804 + 860076 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+40834804 + 860076 mapped (100.00% : 100.00%)
+40834804 + 860076 paired in sequencing
+20417402 + 430038 read1
+20417402 + 430038 read2
+40834804 + 860076 properly paired (100.00% : 100.00%)
+40834804 + 860076 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu12_filter_paired.bam
+41526898 + 863780 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+41526898 + 863780 mapped (100.00% : 100.00%)
+41526898 + 863780 paired in sequencing
+20763449 + 431890 read1
+20763449 + 431890 read2
+41526898 + 863780 properly paired (100.00% : 100.00%)
+41526898 + 863780 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu13_filter_paired.bam
+44036618 + 932628 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+44036618 + 932628 mapped (100.00% : 100.00%)
+44036618 + 932628 paired in sequencing
+22018309 + 466314 read1
+22018309 + 466314 read2
+44036618 + 932628 properly paired (100.00% : 100.00%)
+44036618 + 932628 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu14_filter_paired.bam
+41984558 + 891294 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+41984558 + 891294 mapped (100.00% : 100.00%)
+41984558 + 891294 paired in sequencing
+20992279 + 445647 read1
+20992279 + 445647 read2
+41984558 + 891294 properly paired (100.00% : 100.00%)
+41984558 + 891294 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu15_filter_paired.bam
+41222034 + 822686 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+41222034 + 822686 mapped (100.00% : 100.00%)
+41222034 + 822686 paired in sequencing
+20611017 + 411343 read1
+20611017 + 411343 read2
+41222034 + 822686 properly paired (100.00% : 100.00%)
+41222034 + 822686 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
+genomics/results/bam_filter_paired/Lu16_filter_paired.bam
+44655304 + 995482 in total (QC-passed reads + QC-failed reads)
+0 + 0 secondary
+0 + 0 supplementary
+0 + 0 duplicates
+44655304 + 995482 mapped (100.00% : 100.00%)
+44655304 + 995482 paired in sequencing
+22327652 + 497741 read1
+22327652 + 497741 read2
+44655304 + 995482 properly paired (100.00% : 100.00%)
+44655304 + 995482 with itself and mate mapped
+0 + 0 singletons (0.00% : 0.00%)
+0 + 0 with mate mapped to a different chr
+0 + 0 with mate mapped to a different chr (mapQ>=5)
