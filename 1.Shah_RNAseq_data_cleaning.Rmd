@@ -387,11 +387,11 @@ key <- getBM(attributes=c("ensembl_gene_id",
               values=list(gene.names),
               mart=ensembl)
 
-write_tsv(key, path="data_clean/MGI_ensembl.key.txt")
+write_tsv(key, path="data_clean/ensembl.key.txt")
 ```
 
 ```{r key, message=FALSE}
-key.pc <- read_tsv("data_clean/MGI_ensembl.key.txt") %>% 
+key.pc <- read_tsv("data_clean/ensembl.key.txt") %>% 
   rename(geneName=ensembl_gene_id) %>% 
   # Keep only valid MGI symbols
   filter(!is.na(mgi_symbol) & !is.na(geneName)) %>% 

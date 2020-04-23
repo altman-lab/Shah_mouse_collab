@@ -206,8 +206,13 @@ extract.pval(model=model,
 
 #Write to disk
 dir.create(path="results/gene_level/", showWarnings = FALSE)
-write_csv(get(gene.result.name),
-          paste("results/gene_level/", gene.result.name,
+get(gene.result.name) %>% 
+  #Add annotations
+  left_join(dat.voom$genes, by="geneName") %>% 
+  dplyr::select(geneName, mgi_symbol, gene_biotype,
+                everything()) %>% 
+#Save
+write_csv(paste("results/gene_level/", gene.result.name,
                 ".csv", sep=""))
 ```
 
@@ -263,8 +268,6 @@ get(gene.result.name) %>%
   kable(align=c("l","c","c","c","c")) %>% 
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
-
-
 
 ## Gene plots
 
@@ -339,8 +342,16 @@ mod.result.dir <- list.files(path = "results",
 mod.result.file <- list.files(path = mod.result.dir,
                             pattern = "genes_in_mod.csv",
                             full.names = TRUE)
-mods.net <- read_csv(mod.result.file)
 
+mods.net <- read_csv(mod.result.file) %>% 
+  #add annotation
+  select(-mgi_symbol, -gene_biotype) %>% 
+  left_join(dat.voom$genes, by="geneName") %>% 
+  select(geneName, module, mgi_symbol, gene_biotype,
+         module.char, mod.color)
+  
+  write_csv(mods.net, mod.result.file)
+  
 voom.result.file <- list.files(path = mod.result.dir,
                             pattern = "mod_voom_counts.csv",
                             full.names = TRUE)
@@ -506,6 +517,14 @@ plot.all(voom.dat=voom.mods,
          outdir=paste(mod.figs.dir,"/",sep=""), 
          name=paste(basename,"expression_mod_", sep="_"),
          cores=3, width=5, height=7)
+```
+
+# Annotate results
+
+Add MGI symbols to results files
+
+```{r}
+
 ```
 
 # R session
