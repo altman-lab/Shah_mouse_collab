@@ -287,7 +287,7 @@ dir.create("figs/gene_level/", showWarnings = FALSE)
 plot.all(voom.dat=dat.voom, 
          pval.dat=get(gene.result.name), 
          genes.toPlot=genes.toPlot,
-         gene.key="data_clean/MGI_ensembl.key.txt",
+         gene.key="data_clean/ensembl.key.txt",
          vars=model_gene_names[1:2],
          interaction=TRUE,
          color.var="mouse",
@@ -336,7 +336,8 @@ make.modules(voom.dat = dat.voom,
 ```{r message=FALSE, echo=FALSE}
 #Load results
 mod.result.dir <- list.files(path = "results",
-                             pattern = "module_",
+                             pattern = paste("module", basename,
+                                             "deepSplit", sep="_"),
                              full.names = TRUE)
 
 mod.result.file <- list.files(path = mod.result.dir,
@@ -498,7 +499,8 @@ Create expression plots of modules, and save in `figs/module*`
 
 ```{r message=FALSE, echo=FALSE, results=FALSE, warning=FALSE}
 mod.figs.dir <- list.files(path = "figs",
-                             pattern = "module_",
+                             pattern = paste("module", basename,
+                                             "deepSplit", sep="_"),
                              full.names = TRUE)
 #Remove plots if exist
 do.call(file.remove, list(list.files(mod.figs.dir,
