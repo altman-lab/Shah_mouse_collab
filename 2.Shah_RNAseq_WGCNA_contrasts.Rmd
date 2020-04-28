@@ -1,0 +1,600 @@
+---
+title: "Differential expression of genes and modules"
+subtitle: "J. Shah chimeric mouse collaboration"
+author: "Kim Dill-McFarland, kadm@uw.edu"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: no
+date: "version `r format(Sys.time(), '%B %d, %Y')`"
+editor_options: 
+  chunk_output_type: console
+---
+
+# Background
+
+The purpose of this workflow is to identify differentially expressed (DE) genes and modules.
+
+# Setup
+Load packages
+
+```{r message=FALSE, warning=FALSE}
+# Data manipulation and figures
+library(tidyverse)
+    # Multi-panel figures for ggplot
+    library(cowplot)
+
+#Define ggplot colors
+logFC.cols <- c("Down, FDR < 0.5"="lightblue",
+                "Down, FDR < 0.2"="blue",
+                "Down, FDR < 0.05"="darkblue",
+                "NS"="grey",
+                "Up, FDR < 0.5"="pink",
+                "Up, FDR < 0.2"="red",
+                "Up, FDR < 0.05"="darkred")
+
+#Linear models
+library(limma)
+#Construct networks to ID modules
+library(WGCNA)
+# Print tty table to knit file
+library(knitr)
+library(kableExtra)
+options(knitr.kable.NA = '')
+```
+
+Set seed
+
+```{r}
+set.seed(4389)
+```
+
+Scripts
+
+```{r}
+source("https://raw.githubusercontent.com/kdillmcfarland/R_bioinformatic_scripts/master/RNAseq_module_fxn.R")
+source("https://raw.githubusercontent.com/kdillmcfarland/R_bioinformatic_scripts/master/limma.extract.pval.R")
+source("scripts/RNAseq_boxplot_fxn.R")
+
+`%notin%` <- Negate(`%in%`)
+```
+
+Set variable names and cutoffs for this workflow.
+
+```{r}
+#Rdata file WITHIN project directory that holds cleaned data
+data.file <- "data_clean/Shah.clean.RData"
+
+#Prefix to give file names
+basename <- "Shah_contrast"
+#Define variable(s) of interest
+#Used in PCA plots and to select significant genes to be used in module building
+vars_of_interest <- c("status","cell")
+
+#Maximum fdr for genes to be included in plots and modules
+gene.fdr.cutoff <- 0.5
+```
+
+# Load data
+
+```{r}
+#Load data
+load(data.file)
+```
+
+This includes in the following samples.
+
+```{r echo=FALSE}
+dat.voom$targets %>% 
+  group_by_at(vars(all_of(vars_of_interest))) %>% 
+  tally() %>% 
+  
+  kable(align="c") %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+# Data exploration
+## PCA (genes)
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.height=6}
+#Calculate PCA for all data.
+PCA.all <- as.data.frame(dat.voom$E) %>% 
+  t() %>% 
+  #Calc PCA
+  prcomp()
+
+PC1.label <- paste("PC1 (", summary(PCA.all)$importance[2,1]*100, "%)", sep="")
+PC2.label <-paste("PC2 (", summary(PCA.all)$importance[2,2]*100, "%)", sep="")
+
+# Extract PC values
+PCA.all.dat <- as.data.frame(PCA.all$x) %>% 
+  rownames_to_column("libID") %>%
+  # Merge with metadata
+  full_join(as.data.frame(dat.voom$targets), by="libID")
+
+PCA1 <- ggplot(PCA.all.dat,
+                  aes(PC1, PC2)) +
+           geom_point(aes(color=status),
+                      size=3) + 
+  #Beautify
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom") +
+  labs(x=PC1.label, y=PC2.label, title="voom normalized logCPM") +
+  coord_fixed(ratio=1)
+
+PCA2 <- ggplot(PCA.all.dat,
+                  aes(PC1, PC2)) +
+           geom_point(aes(color=cell),
+                      size=3) + 
+  #Beautify
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom") +
+  labs(x=PC1.label, y=PC2.label, title="voom normalized logCPM") +
+  coord_fixed(ratio=1) +
+  scale_color_brewer(palette="Set1")
+
+PCA3 <- ggplot(PCA.all.dat,
+                  aes(PC1, PC2)) +
+           geom_point(aes(color=status, shape=cell),
+                      size=3) + 
+  #Beautify
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom") +
+  labs(x=PC1.label, y=PC2.label, title="voom normalized logCPM") +
+  coord_fixed(ratio=1)
+
+PCA4 <- ggplot(PCA.all.dat,
+                  aes(PC1, PC2)) +
+           geom_point(aes(color=as.character(mouse)),
+                      size=3) + 
+  #Beautify
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom") +
+  labs(x=PC1.label, y=PC2.label, title="voom normalized logCPM") +
+  coord_fixed(ratio=1)+
+  scale_color_brewer(palette="Set3")
+
+plot_grid(PCA1, PCA2, PCA3, PCA4, ncol=2)
+
+ggsave("figs/PCA_Shah_geneVoom.png", 
+       plot_grid(PCA1, PCA2, PCA3, PCA4, align = "hv",
+                 ncol=2),
+       height=8, width=10)
+```
+
+# Define significant genes
+## Linear model 
+
+```{r}
+# Define model
+model <- model.matrix(~0 + status:cell, data=dat.voom$targets)
+    colnames(model) <- c("Uninfected_WT", "Infected_WT",
+                         "Uninfected_TKO", "Infected_TKO")
+# Define contrasts of interest
+contrasts <- makeContrasts(
+  uninfected = Uninfected_WT-Uninfected_TKO, 
+  infected = Infected_WT-Infected_TKO,
+  levels=model)
+  
+#Calculate consensus corr of samples from the same donor
+consensus.corr <- duplicateCorrelation(
+                    dat.voom$E,
+                    model,
+  block=dat.voom$targets$mouse)$consensus.correlation
+  
+  consensus.corr
+  
+# Fit model to transformed count data. Calculate eBayes
+  efitQW <- eBayes(
+            contrasts.fit(contrasts=contrasts,
+            lmFit(dat.voom$E, model,
+                  block=dat.voom$targets$mouse,
+                  correlation=consensus.corr)))
+```
+
+```{r warning=FALSE, message=FALSE, echo=FALSE}
+gene.result.name <- paste(basename, "gene_pval", sep="_")
+#Extract p-values from results
+extract.pval(model=model,
+             voom.dat=dat.voom$E, 
+             eFit=efitQW, 
+             name=gene.result.name,
+             summary=TRUE,
+             contrasts=TRUE, contrast.mat=contrasts)
+
+#Write to disk
+dir.create(path="results/gene_level/", showWarnings = FALSE)
+get(gene.result.name) %>% 
+  #Add annotations
+  left_join(dat.voom$genes, by="geneName") %>% 
+  dplyr::select(geneName, mgi_symbol, gene_biotype,
+                everything()) %>% 
+#Save
+write_csv(paste("results/gene_level/", gene.result.name,
+                ".csv", sep=""))
+```
+
+### Summarize gene model
+
+```{r echo=FALSE}
+get(paste(gene.result.name, "summ", sep=".")) %>% 
+  
+  kable(align=c("l","c","c","c","c","c","c"),
+        col.names = c("Variable", "0.05", "0.1", "0.2","0.3","0.4","0.5")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE) %>% 
+  add_header_above(c(" ", "Genes with FDR <"=6))
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.height=5, fig.width=9}
+get(gene.result.name) %>%  
+  filter(group != "(Intercept)") %>% 
+  mutate(col.group = ifelse(adj.P.Val <= 0.05 & FC.group=="up", 
+                            "Up, FDR < 0.05",
+                     ifelse(adj.P.Val <= 0.05 & FC.group=="down", 
+                            "Down, FDR < 0.05",
+                     ifelse(adj.P.Val <= 0.2 & FC.group=="up", 
+                            "Up, FDR < 0.2",
+                     ifelse(adj.P.Val <= 0.2 & FC.group=="down", 
+                            "Down, FDR < 0.2",
+                     ifelse(adj.P.Val <= 0.5 & FC.group=="up", 
+                            "Up, FDR < 0.5",
+                     ifelse(adj.P.Val <= 0.5 & FC.group=="down", 
+                            "Down, FDR < 0.5",
+                            "NS"))))))) %>%
+  arrange(group,-adj.P.Val) %>% 
+  
+ggplot(aes(x=AveExpr, y=logFC, color=col.group)) +
+  geom_point(size=2) +
+  scale_color_manual(values=logFC.cols) +
+  facet_grid(~group, scales = "free_y")+
+  theme_classic() +
+  labs(x="Average log CPM", y="Log fold change", color="") +
+  guides(color = guide_legend(reverse = TRUE)) +
+  theme(text = element_text(size=18),
+        legend.position = "bottom") +
+  guides(color=guide_legend(nrow=3, byrow=TRUE))
+```
+
+### Compare significant genes
+
+```{r echo=FALSE, message=FALSE}
+Shah_gene_pval <- read_csv("results/gene_level/Shah_gene_pval.csv")
+
+par(mfrow = c(2, 3))
+library(venn)
+overlap.summ <- data.frame()
+
+for(fdr in c(0.05,0.1,0.2,0.3,0.4,0.5)){
+  #filter signif genes
+  signif1 <- Shah_gene_pval %>% 
+    filter(group != "(Intercept)" & adj.P.Val <= fdr) %>% 
+    select(geneName) %>% 
+    distinct() %>% unlist(use.names = FALSE)
+  
+  signif2 <- Shah_contrast_gene_pval %>% 
+    filter(adj.P.Val <= fdr) %>% 
+    select(geneName) %>% 
+    distinct() %>% unlist(use.names = FALSE)
+  
+  #Venn
+  venn(ilab=FALSE, zcolor = "style",ilcs=1.2, sncs=1.2,
+     snames=c("interaction_model","contrast_model"),
+     x=list(signif1,signif2))
+  
+  title(sub=paste("FDR <", fdr, sep=" "),line = -1, cex.sub=1.5)
+  
+  #Summary table
+  summ1 <- Shah_gene_pval %>% 
+    filter(group != "(Intercept)" & adj.P.Val <= fdr & 
+             geneName %notin% signif2) %>% 
+    group_by(geneName) %>% 
+    summarize(signif = paste(group, collapse=",")) %>% 
+    ungroup() %>% 
+    count(signif)
+  
+  summ2 <- Shah_contrast_gene_pval %>% 
+    filter(group != "(Intercept)" & adj.P.Val <= fdr & 
+             geneName %notin% signif1) %>% 
+    group_by(geneName) %>% 
+    summarize(signif = paste(group, collapse=",")) %>% 
+    ungroup() %>% 
+    count(signif)
+  
+  summ.all <- bind_rows(summ1, summ2) %>% 
+    mutate(model = c("interaction","contrast"),
+           FDR = fdr)
+  overlap.summ <- bind_rows(overlap.summ, summ.all)
+}
+
+overlap.summ %>% 
+  select(FDR, model, n, signif) %>% 
+  
+  kable(align="c", "html",
+        col.names = c("FDR", "model", 
+          "genes not signif in other model",
+          "variable(s) those gene are signif for in this model")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE) %>% 
+  row_spec(c(2,4,6,8,10), extra_css = "border-bottom: 1px solid")
+```
+
+Roughly half of genes identified as significant in either model are also significant in the other model. Genes unique to the interaction model are only significant for infection `status`. Thus, the contrasts model appears to be successfully removing much of the infection-only signal while retaining all `cell` type and `status:cell` interaction signals.
+
+Interestingly the genes unique to the contrasts model were only significant for cell type within `infected` cells. This may indicate that the contrasts model is better resolving signal from the interaction term `status:cell` since the interaction model defines the interaction from the intercept of `status` = uninfected and `cell` = WT.
+
+Overall, these results indicate that the contrasts model better resolves the signals of interest.
+
+## Gene plots
+
+Save in `figs/gene_level_contrast`
+
+```{r eval=FALSE, echo=FALSE}
+#Subset to genes for modules 
+genes.toPlot <- unique(Shah_contrast_gene_pval$geneName)
+
+#PLOTS
+dir.create("figs/gene_level_contrast/", showWarnings = FALSE)
+plot.all(voom.dat=dat.voom, 
+         pval.dat=get(gene.result.name), 
+         genes.toPlot=genes.toPlot,
+         gene.key="data_clean/ensembl.key.txt",
+         vars=c("status","cell"),
+         interaction=TRUE,
+         interaction.terms=c("uninfected","infected"),
+         color.var="mouse",
+         outdir="figs/gene_level_contrast/", 
+         name=paste(basename,"expression_", sep="_"),
+         cores=3, width=5, height=7)
+```
+
+# Modules: Status and cell
+
+Define customizations for module building.
+
+```{r}
+#Set FDR cutoff for gene inclusion in modules
+mod.fdr.cutoff <- 0.3
+#List variables from which significant genes will be extracted
+vars_for_mods <- c("uninfected","infected")
+```
+
+```{r echo=FALSE}
+genes.signif <- get(gene.result.name) %>% 
+  filter(group %in% vars_for_mods) %>% 
+  filter(adj.P.Val <= mod.fdr.cutoff) %>% 
+  distinct(geneName) %>% 
+  select(geneName) %>% unlist(use.names = FALSE)
+```
+
+In total, `r length(genes.signif)` of `r nrow(dat.voom$E)` genes that significantly differed (FDR $\leq$ `r mod.fdr.cutoff`) by one or more variables of interest will be incorporated into gene modules.
+
+```{r}
+make.modules(voom.dat = dat.voom,
+             genes.signif = genes.signif,
+             Rsq.min = 0.8,
+             minModuleSize = 50,
+             deepSplit = 3,
+             nThread = 4,
+             basename = basename)
+```
+
+```{r message=FALSE, echo=FALSE}
+#Load results
+mod.result.dir <- list.files(path = "results",
+                             pattern = basename,
+                             full.names = TRUE)
+
+mod.result.file <- list.files(path = mod.result.dir,
+                            pattern = "genes_in_mod.csv",
+                            full.names = TRUE)
+
+mods.net <- read_csv(mod.result.file) %>% 
+  #add annotation
+  select(-mgi_symbol, -gene_biotype) %>% 
+  left_join(dat.voom$genes, by="geneName") %>% 
+  select(geneName, module, mgi_symbol, gene_biotype,
+         module.char, mod.color)
+  
+  write_csv(mods.net, mod.result.file)
+  
+voom.result.file <- list.files(path = mod.result.dir,
+                            pattern = "mod_voom_counts.csv",
+                            full.names = TRUE)
+voom.mods <- read_csv(voom.result.file) %>% 
+  column_to_rownames("module")
+```
+
+A power threshold of `r sft.select$Power` was used as it achieves high R^2^ and sufficient mean connectivity (R^2^ = `r sft.select$SFT.R.sq`, mean k = `r sft.select$mean.k`).
+
+```{r echo=FALSE}
+#Number of genes in each module
+kable(as.data.frame(table(mods.net$module.char)), 
+      align="c", col.names = c("Module","Total genes")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+This created `r max(mods.net$module)` modules plus `r nrow(mods.net[mods.net$module ==0,])` (`r nrow(mods.net[mods.net$module ==0,]) / length(genes.signif) * 100`%) genes not grouped into any module (*e.g.* in module 0).
+
+## PCA (modules)
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.height=6}
+# Calculate PCA
+PCA2 <-  voom.mods %>% 
+  t() %>% 
+  prcomp()
+
+PC1.label <- paste("PC1 (", summary(PCA2)$importance[2,1]*100, "%)", sep="")
+PC2.label <-paste("PC2 (", summary(PCA2)$importance[2,2]*100, "%)", sep="")
+
+# Extract PC values
+PCA.all.dat <- as.data.frame(PCA2$x) %>% 
+  rownames_to_column("libID") %>%
+  # Merge with metadata
+  full_join(as.data.frame(dat.voom$targets), by="libID")
+
+PCA1 <- ggplot(PCA.all.dat,
+                  aes(PC1, PC2)) +
+           geom_point(aes(color=status),
+                      size=3) + 
+  #Beautify
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom") +
+  labs(x=PC1.label, y=PC2.label, title="modules\nvoom normalized logCPM") +
+  coord_fixed(ratio=1)
+
+PCA2 <- ggplot(PCA.all.dat,
+                  aes(PC1, PC2)) +
+           geom_point(aes(color=cell),
+                      size=3) + 
+  #Beautify
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom") +
+  labs(x=PC1.label, y=PC2.label, title="modules\nvoom normalized logCPM") +
+  coord_fixed(ratio=1) +
+  scale_color_brewer(palette="Set1")
+
+PCA3 <- ggplot(PCA.all.dat,
+                  aes(PC1, PC2)) +
+           geom_point(aes(color=status, shape=cell),
+                      size=3) + 
+  #Beautify
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom") +
+  labs(x=PC1.label, y=PC2.label, title="modules\nvoom normalized logCPM") +
+  coord_fixed(ratio=1)
+
+PCA4 <- ggplot(PCA.all.dat,
+                  aes(PC1, PC2)) +
+           geom_point(aes(color=as.character(mouse)),
+                      size=3) + 
+  #Beautify
+  theme_classic() +
+  theme(legend.title = element_blank(),
+        legend.position = "bottom") +
+  labs(x=PC1.label, y=PC2.label, title="modules\nvoom normalized logCPM") +
+  coord_fixed(ratio=1)+
+  scale_color_brewer(palette="Set3")
+
+plot_grid(PCA1, PCA2, PCA3, PCA4, ncol=2)
+
+ggsave("figs/PCA_Shah_contrast_moduleVoom.png", 
+       plot_grid(PCA1, PCA2, PCA3, PCA4, align = "hv",
+                 ncol=2),
+       height=8, width=10)
+```
+
+## Linear model
+
+```{r}
+#Calculate consensus corr of samples from the same donor   
+consensus.corr <- duplicateCorrelation(
+                    voom.mods,
+                    model,
+  block=dat.voom$targets$mouse)$consensus.correlation
+  
+  consensus.corr
+  
+# Fit model to transformed count data. Calculate eBayes
+  efitQW.mods <- eBayes(
+            contrasts.fit(contrasts=contrasts,
+            lmFit(voom.mods, model,
+                  block=dat.voom$targets$mouse,
+                  correlation=consensus.corr)))
+```
+
+```{r warning=FALSE, message=FALSE, echo=FALSE}
+mod.result.name <- paste(basename, "mod_pval", sep="_")
+
+#Extract p-values from results
+extract.pval(model=model,
+             voom.dat=voom.mods, 
+             eFit=efitQW.mods, 
+             name=mod.result.name,
+             summary=TRUE,
+             contrasts=TRUE, contrast.mat=contrasts)
+
+#Save to disk
+get(mod.result.name) %>% 
+  rename(module=geneName) %>% 
+write_csv(.,
+  paste(mod.result.dir, "/", mod.result.name,
+                ".csv", sep=""))
+```
+
+### Summarize module model
+
+```{r echo=FALSE}
+get(paste(mod.result.name, "summ", sep=".")) %>% 
+  
+  kable(align=c("l","c","c","c","c","c","c"),
+    col.names = c("Variable", "0.05","0.1","0.2","0.3","0.4","0.5")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE) %>% 
+  add_header_above(c(" ", "Modules with FDR <"=6))
+```
+
+```{r echo=FALSE}
+get(mod.result.name) %>% 
+  mutate(signif.05 = ifelse(adj.P.Val <= 0.05, 
+                            as.character(FC.group), 
+                            NA)) %>% 
+  select(geneName, signif.05, group) %>% 
+  pivot_wider(names_from = group, values_from = signif.05) %>% 
+  mutate(force.group = ifelse(is.na(uninfected) | is.na(infected), 
+                              "A","B")) %>% 
+  arrange(force.group,uninfected,infected) %>% 
+  select(-force.group) %>% 
+  
+  kable(align="c",
+        col.names = c("module", "uninfected", "infected")) %>% 
+  kable_styling(bootstrap_options = "striped", 
+                full_width = FALSE) %>% 
+  pack_rows("Significant in uninfected", 1,3) %>% 
+  pack_rows("Significant in infected", 4,9) %>% 
+  pack_rows("Significant in both", 10,19)
+```
+
+_Directions are relative to WT. For example, `down` means the module has **lower** expression in TKO relative to WT._
+
+## Module plots
+
+Create expression plots of modules, and save in `figs/module*`
+
+```{r message=FALSE, echo=FALSE, results=FALSE, warning=FALSE}
+mod.figs.dir <- list.files(path = "figs",
+                             pattern = basename,
+                             full.names = TRUE)
+#Remove plots if exist
+do.call(file.remove, list(list.files(mod.figs.dir,
+                     pattern="module_[0-9]{1,4}.pdf",
+                     full.names = TRUE)))
+
+#PLOTS
+plot.all(voom.dat=voom.mods, 
+         pval.dat=get(mod.result.name), 
+         meta.dat=as.data.frame(dat.voom$targets),
+         genes.toPlot=unique(rownames(voom.mods))[-1],
+         ######
+         vars=c("status","cell"),
+         interaction=TRUE,
+         interaction.terms=c("uninfected","infected"),
+         color.var="mouse",
+         outdir=paste(mod.figs.dir[1],"/",sep=""), 
+         name=paste(basename,"expression_mod_", sep="_"),
+         cores=3, width=5, height=7)
+```
+
+# R session
+
+```{r}
+sessionInfo()
+```
+
+***
