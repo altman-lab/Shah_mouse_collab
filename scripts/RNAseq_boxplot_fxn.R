@@ -68,6 +68,7 @@ Example
 plot.all <- function(voom.dat, pval.dat, meta.dat, 
                      genes.toPlot, vars,
                           interaction=FALSE,
+                          interaction.terms=NULL,
                           color.var=NULL, colors=NULL,
                           outdir=NULL, name=NULL, 
                           gene.key=NULL,
@@ -292,7 +293,24 @@ foreach(i = 1:length(to_plot), .verbose = TRUE) %dopar% {
     
     all.var.levels <- c(var.levels, alt.var.levels)
     #Create FDR plot title if exists in the data
-    if(any(all.var.levels %in% plot.dat.sub$group)){
+    if(length(interaction.terms) == 1){
+      plot.dat.sub2 <- plot.dat.sub %>% 
+        filter(group == interaction.terms)
+      
+      plot.title <- paste("FDR=", formatC(unique(plot.dat.sub2$adj.P.Val), 
+                                          format = "e", digits = 4), sep="")
+    } else if(length(interaction.terms) > 1){
+      plot.dat.sub2 <- plot.dat.sub %>% 
+        filter(group %in% interaction.terms) %>% 
+        arrange(group)
+      
+      var.title <- unique(plot.dat.sub2$group)
+      fdr.title <- formatC(unique(plot.dat.sub2$adj.P.Val), 
+                           format = "e", digits = 4)
+      plot.title <- paste(var.title, fdr.title, sep=" FDR = ", 
+                          collapse = " \n")
+      
+    } else if(any(all.var.levels %in% plot.dat.sub$group)){
       plot.dat.sub2 <- plot.dat.sub %>% 
         filter(grepl(":", group))
       
@@ -308,6 +326,8 @@ foreach(i = 1:length(to_plot), .verbose = TRUE) %dopar% {
     
     #Interaction plot
     plot2 <- plot.dat.sub2 %>% 
+      select(-group, -adj.P.Val) %>% 
+      distinct() %>% 
       ggplot(aes(x=get(vars[1]):get(vars[2]), y=voom.count)) +
       geom_boxplot(outlier.shape = NA) +
       geom_jitter(aes(color=color.var), height=0, width=0.2) +
