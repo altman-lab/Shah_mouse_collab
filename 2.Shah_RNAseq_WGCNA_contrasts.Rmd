@@ -178,8 +178,8 @@ model <- model.matrix(~0 + status:cell, data=dat.voom$targets)
                          "Uninfected_TKO", "Infected_TKO")
 # Define contrasts of interest
 contrasts <- makeContrasts(
-  uninfected = Uninfected_WT-Uninfected_TKO, 
-  infected = Infected_WT-Infected_TKO,
+  uninfected = Uninfected_TKO-Uninfected_WT, 
+  infected = Infected_TKO-Infected_WT,
   levels=model)
   
 #Calculate consensus corr of samples from the same donor
@@ -224,11 +224,13 @@ write_csv(paste("results/gene_level/", gene.result.name,
 
 ```{r echo=FALSE}
 get(paste(gene.result.name, "summ", sep=".")) %>% 
+  mutate(comparison = "TKO-WT") %>% 
+  select(group, comparison, everything()) %>% 
   
   kable(align=c("l","c","c","c","c","c","c"),
-        col.names = c("Variable", "0.05", "0.1", "0.2","0.3","0.4","0.5")) %>% 
+        col.names = c("Variable", "Comparison", "0.05", "0.1", "0.2","0.3","0.4","0.5")) %>% 
   kable_styling(bootstrap_options = "striped", full_width = FALSE) %>% 
-  add_header_above(c(" ", "Genes with FDR <"=6))
+  add_header_above(c(" "=2, "Genes with FDR <"=6))
 ```
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, fig.height=5, fig.width=9}
@@ -533,11 +535,14 @@ write_csv(.,
 
 ```{r echo=FALSE}
 get(paste(mod.result.name, "summ", sep=".")) %>% 
+  mutate(comparison = "TKO-WT") %>% 
+  select(group, comparison, everything()) %>% 
   
   kable(align=c("l","c","c","c","c","c","c"),
-    col.names = c("Variable", "0.05","0.1","0.2","0.3","0.4","0.5")) %>% 
+    col.names = c("Variable", "Comparison",
+                  "0.05","0.1","0.2","0.3","0.4","0.5")) %>% 
   kable_styling(bootstrap_options = "striped", full_width = FALSE) %>% 
-  add_header_above(c(" ", "Modules with FDR <"=6))
+  add_header_above(c(" "=2, "Modules with FDR <"=6))
 ```
 
 ```{r echo=FALSE}
@@ -553,7 +558,9 @@ get(mod.result.name) %>%
   select(-force.group) %>% 
   
   kable(align="c",
-        col.names = c("module", "uninfected", "infected")) %>% 
+        col.names = c("module", 
+                      "uninfected \ndirection in TKO", 
+                      "infected \ndirection in TKO")) %>% 
   kable_styling(bootstrap_options = "striped", 
                 full_width = FALSE) %>% 
   pack_rows("Significant in uninfected", 1,3) %>% 
