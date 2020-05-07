@@ -1527,7 +1527,7 @@ div.tocify {
 <h1 class="title toc-ignore">Gene set enrichment analysis (GSEA)</h1>
 <h3 class="subtitle">J. Shah chimeric mouse collaboration</h3>
 <h4 class="author">Kim Dill-McFarland, <a href="mailto:kadm@uw.edu" class="email">kadm@uw.edu</a></h4>
-<h4 class="date">version April 27, 2020</h4>
+<h4 class="date">version May 07, 2020</h4>
 
 </div>
 
@@ -1552,82 +1552,10 @@ library(kableExtra)</code></pre>
 <h1>Load data</h1>
 <pre class="r"><code>#Gene results
 Shah_contrast_gene_pval &lt;-
-  read_csv(&quot;results/gene_level/Shah_contrast_gene_pval.csv&quot;)</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   geneName = col_character(),
-##   mgi_symbol = col_character(),
-##   gene_biotype = col_character(),
-##   logFC = col_double(),
-##   AveExpr = col_double(),
-##   t = col_double(),
-##   P.Value = col_double(),
-##   adj.P.Val = col_double(),
-##   B = col_double(),
-##   group = col_character(),
-##   FC.group = col_character()
-## )</code></pre>
-<pre class="r"><code>#Genome
-library(org.Mm.eg.db)</code></pre>
-<pre><code>## Loading required package: AnnotationDbi</code></pre>
-<pre><code>## Loading required package: stats4</code></pre>
-<pre><code>## Loading required package: BiocGenerics</code></pre>
-<pre><code>## Loading required package: parallel</code></pre>
-<pre><code>## 
-## Attaching package: &#39;BiocGenerics&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:parallel&#39;:
-## 
-##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
-##     clusterExport, clusterMap, parApply, parCapply, parLapply,
-##     parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
-<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
-## 
-##     combine, intersect, setdiff, union</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     IQR, mad, sd, var, xtabs</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     anyDuplicated, append, as.data.frame, basename, cbind, colnames,
-##     dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
-##     grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
-##     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
-##     rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
-##     union, unique, unsplit, which, which.max, which.min</code></pre>
-<pre><code>## Loading required package: Biobase</code></pre>
-<pre><code>## Welcome to Bioconductor
-## 
-##     Vignettes contain introductory material; view with
-##     &#39;browseVignettes()&#39;. To cite Bioconductor, see
-##     &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.</code></pre>
-<pre><code>## Loading required package: IRanges</code></pre>
-<pre><code>## Loading required package: S4Vectors</code></pre>
-<pre><code>## 
-## Attaching package: &#39;S4Vectors&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
-## 
-##     first, rename</code></pre>
-<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
-## 
-##     expand</code></pre>
-<pre><code>## The following object is masked from &#39;package:base&#39;:
-## 
-##     expand.grid</code></pre>
-<pre><code>## 
-## Attaching package: &#39;IRanges&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
-## 
-##     collapse, desc, slice</code></pre>
-<pre><code>## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     reduce</code></pre>
-<pre><code>## 
-## Attaching package: &#39;AnnotationDbi&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
-## 
-##     select</code></pre>
-<pre><code>## </code></pre>
-<pre class="r"><code>#Script for running GSEA
+  read_csv(&quot;results/gene_level/Shah_contrast_gene_pval.csv&quot;)
+#Genome
+library(org.Mm.eg.db)
+#Script for running GSEA
 source(&quot;scripts/GSEA_enricher.R&quot;)</code></pre>
 </div>
 <div id="gene-set-enrichment-analysis-gsea" class="section level1">
@@ -1665,57 +1593,34 @@ source(&quot;scripts/GSEA_enricher.R&quot;)</code></pre>
 </ul></li>
 </ul>
 </div>
-<div id="gsea-of-all-significant-genes" class="section level2">
-<h2>GSEA of all significant genes</h2>
-<p>List genese with FDR &lt; 0.05</p>
+<div id="gsea-gene-level" class="section level2">
+<h2>GSEA gene-level</h2>
+<p>List genes with FDR &lt; 0.05</p>
 <pre class="r"><code>gene.list &lt;- Shah_contrast_gene_pval %&gt;% 
   filter(adj.P.Val &lt;= 0.05) %&gt;% 
   dplyr::select(geneName) %&gt;% unlist(use.names = FALSE)</code></pre>
 <pre class="r"><code>#Run custom function on genes
 enrich.fxn(gene.list = gene.list,
            category = &quot;H&quot;, genome = org.Mm.eg.db,
-           basename=&quot;contrast_signif_genes&quot;)</code></pre>
-<pre><code>## Loading required package: clusterProfiler</code></pre>
-<pre><code>## </code></pre>
-<pre><code>## Registered S3 method overwritten by &#39;enrichplot&#39;:
-##   method               from
-##   fortify.enrichResult DOSE</code></pre>
-<pre><code>## clusterProfiler v3.12.0  For help: https://guangchuangyu.github.io/software/clusterProfiler
-## 
-## If you use clusterProfiler in published research, please cite:
-## Guangchuang Yu, Li-Gen Wang, Yanyan Han, Qing-Yu He. clusterProfiler: an R package for comparing biological themes among gene clusters. OMICS: A Journal of Integrative Biology. 2012, 16(5):284-287.</code></pre>
-<pre><code>## 
-## Attaching package: &#39;clusterProfiler&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     simplify</code></pre>
-<pre><code>## Loading required package: msigdbr</code></pre>
-<pre><code>## Loading required package: org.Hs.eg.db</code></pre>
-<pre><code>## </code></pre>
-<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
-<pre><code>## Note: Using an external vector in selections is ambiguous.
-## ℹ Use `all_of(pivot_names)` instead of `pivot_names` to silence this message.
-## ℹ See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.
-## This message is displayed once per session.</code></pre>
-<pre class="r"><code>enrich.fxn(gene.list = gene.list,
+           basename=&quot;contrast_signif_genes&quot;)
+
+enrich.fxn(gene.list = gene.list,
            category = &quot;C5&quot;, genome = org.Mm.eg.db,
-           basename=&quot;contrast_signif_genes&quot;)</code></pre>
-<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
-<pre class="r"><code>enrich.fxn(gene.list = gene.list,
+           basename=&quot;contrast_signif_genes&quot;)
+
+enrich.fxn(gene.list = gene.list,
            category = &quot;C2&quot;, subcategory = &quot;CGP&quot;, genome = org.Mm.eg.db,
-           basename=&quot;contrast_signif_genes&quot;)</code></pre>
-<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
-<pre class="r"><code>enrich.fxn(gene.list = gene.list,
+           basename=&quot;contrast_signif_genes&quot;)
+
+enrich.fxn(gene.list = gene.list,
            category = &quot;C2&quot;, subcategory = &quot;CP:KEGG&quot;, genome = org.Mm.eg.db,
-           basename=&quot;contrast_signif_genes&quot;)</code></pre>
-<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
-<pre class="r"><code>enrich.fxn(gene.list = gene.list,
+           basename=&quot;contrast_signif_genes&quot;)
+
+enrich.fxn(gene.list = gene.list,
            category = &quot;C7&quot;, genome = org.Mm.eg.db,
            basename=&quot;contrast_signif_genes&quot;)</code></pre>
-<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
-</div>
-<div id="gsea-summary" class="section level2">
-<h2>GSEA summary</h2>
+<div id="gsea-gene-level-summary" class="section level3">
+<h3>GSEA gene-level summary</h3>
 <p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.05.</p>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
@@ -1743,8 +1648,898 @@ CGP
 111
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:left;">
+CP:KEGG
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:center;">
+249
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:center;">
+560
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+H
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
 </tbody>
 </table>
+</div>
+</div>
+<div id="gsea-module-level" class="section level2">
+<h2>GSEA module-level</h2>
+<p>List genes in each module.</p>
+<pre class="r"><code>mods.net &lt;- read_csv(&quot;results/module_Shah_contrast_deepSplit3_minMod50/Shah_contrast_genes_in_mod.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   geneName = col_character(),
+##   module = col_double(),
+##   mgi_symbol = col_character(),
+##   gene_biotype = col_character(),
+##   module.char = col_character(),
+##   mod.color = col_character()
+## )</code></pre>
+<pre class="r"><code>gsea.temp &lt;- data.frame()
+
+for(i in 0:max(mods.net$module)){
+  gene.list &lt;- mods.net %&gt;% 
+    filter(module == i) %&gt;% 
+    dplyr::select(geneName) %&gt;% unlist(use.names = FALSE)
+  
+  #Run custom function on genes
+  enrich.fxn(gene.list = gene.list,
+           category = &quot;H&quot;, genome = org.Mm.eg.db,
+           basename=&quot;module_genes&quot;)
+
+  enrich.fxn(gene.list = gene.list,
+           category = &quot;C5&quot;, genome = org.Mm.eg.db,
+           basename=&quot;module_genes&quot;)
+
+  enrich.fxn(gene.list = gene.list,
+           category = &quot;C2&quot;, subcategory = &quot;CGP&quot;, genome = org.Mm.eg.db,
+           basename=&quot;module_genes&quot;)
+
+  enrich.fxn(gene.list = gene.list,
+           category = &quot;C2&quot;, subcategory = &quot;CP:KEGG&quot;, 
+           genome = org.Mm.eg.db,
+           basename=&quot;module_genes&quot;)
+
+  enrich.fxn(gene.list = gene.list,
+           category = &quot;C7&quot;, genome = org.Mm.eg.db,
+           basename=&quot;module_genes&quot;)
+  
+  for(file in list.files(path=&quot;results/GSEA/&quot;,
+                         pattern=&quot;module_genes&quot;,
+                         full.names = TRUE)){
+    gsea.temp &lt;- bind_rows(gsea.temp, read_csv(file))
+    
+  }
+  
+  #Add module ID column
+  if(&quot;module&quot; %in% colnames(gsea.temp)){
+    gsea.temp &lt;- gsea.temp %&gt;% 
+                 mutate(module = ifelse(is.na(module), i, module))
+  } else{
+    gsea.temp &lt;- gsea.temp %&gt;% 
+                 mutate(module = i)
+  }
+  
+}
+
+#Save
+for(db in unique(gsea.temp$category)){
+  if(db != &quot;C2&quot;){
+    gsea.sub &lt;- gsea.temp %&gt;% 
+                filter(category == db)
+  
+    filename &lt;- paste(&quot;results/GSEA/GSEA_module_genes_&quot;, 
+                      db, &quot;.csv&quot;, sep=&quot;&quot;)
+    write_csv(gsea.sub, filename)
+  
+  } else{
+    gsea.sub &lt;- gsea.temp %&gt;% 
+                filter(category == db)
+    for(db.sub in unique(gsea.sub$subcategory)){
+      gsea.sub &lt;- gsea.sub %&gt;% 
+                filter(subcategory == db.sub)
+      
+      filename &lt;- paste(&quot;results/GSEA/GSEA_module_genes_&quot;, 
+                      db,&quot;_&quot;, db.sub, &quot;.csv&quot;, sep=&quot;&quot;) %&gt;% 
+        gsub(&quot;:&quot;,&quot;.&quot;,.)
+      write_csv(gsea.sub, filename)
+      }
+  }
+}</code></pre>
+<div id="gsea-module-level-summary" class="section level3">
+<h3>GSEA module-level summary</h3>
+<p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.05.</p>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Module
+</th>
+<th style="text-align:left;">
+Category
+</th>
+<th style="text-align:center;">
+Subcategory
+</th>
+<th style="text-align:left;">
+Significant terms
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+1
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+137
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CP:KEGG
+</td>
+<td style="text-align:left;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+187
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+683
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+2
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+68
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CP:KEGG
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+97
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+460
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+3
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+27
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CP:KEGG
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+29
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+418
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="3">
+4
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+28
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+178
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="3">
+5
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+123
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+6
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+166
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CP:KEGG
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+131
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+744
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="3">
+7
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="4">
+8
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+31
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+21
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+96
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="3">
+9
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CP:KEGG
+</td>
+<td style="text-align:left;">
+14
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="3">
+10
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CP:KEGG
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="3">
+11
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+29
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+11
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+202
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+40
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="4">
+13
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CP:KEGG
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+120
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="4">
+14
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+15
+</td>
+<td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+16
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CP:KEGG
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="4">
+18
+</td>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CGP
+</td>
+<td style="text-align:left;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C2
+</td>
+<td style="text-align:center;">
+CP:KEGG
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C5
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+C7
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:left;">
+3
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 <div id="r-session" class="section level1">
@@ -1775,39 +2570,39 @@ CGP
 ## [19] ggplot2_3.3.0          tidyverse_1.3.0       
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] fgsea_1.10.1        colorspace_1.4-1    ggridges_0.5.2     
-##  [4] ellipsis_0.3.0      qvalue_2.16.0       fs_1.4.1           
-##  [7] rstudioapi_0.11     farver_2.0.3        urltools_1.7.3     
-## [10] graphlayouts_0.6.0  ggrepel_0.8.2       bit64_0.9-7        
-## [13] fansi_0.4.1         lubridate_1.7.8     xml2_1.3.1         
-## [16] splines_3.6.1       GOSemSim_2.10.0     polyclip_1.10-0    
-## [19] jsonlite_1.6.1      broom_0.5.6         GO.db_3.8.2        
-## [22] dbplyr_1.4.3        ggforce_0.3.1       BiocManager_1.30.10
-## [25] compiler_3.6.1      httr_1.4.1          rvcheck_0.1.8      
-## [28] backports_1.1.6     assertthat_0.2.1    Matrix_1.2-18      
-## [31] cli_2.0.2           tweenr_1.0.1        htmltools_0.4.0    
-## [34] prettyunits_1.1.1   tools_3.6.1         igraph_1.2.5       
-## [37] gtable_0.3.0        glue_1.4.0          reshape2_1.4.4     
-## [40] DO.db_2.9           fastmatch_1.1-0     Rcpp_1.0.4.6       
-## [43] enrichplot_1.4.0    cellranger_1.1.0    vctrs_0.2.4        
-## [46] nlme_3.1-147        ggraph_2.0.2        xfun_0.13          
-## [49] rvest_0.3.5         lifecycle_0.2.0     DOSE_3.10.2        
-## [52] europepmc_0.3       MASS_7.3-51.5       scales_1.1.0       
-## [55] tidygraph_1.1.2     hms_0.5.3           RColorBrewer_1.1-2 
-## [58] yaml_2.2.1          memoise_1.1.0       gridExtra_2.3      
-## [61] UpSetR_1.4.0        triebeard_0.3.0     stringi_1.4.6      
-## [64] RSQLite_2.2.0       highr_0.8           BiocParallel_1.18.1
-## [67] rlang_0.4.5         pkgconfig_2.0.3     evaluate_0.14      
-## [70] lattice_0.20-41     cowplot_1.0.0       bit_1.1-15.2       
-## [73] tidyselect_1.0.0    plyr_1.8.6          magrittr_1.5       
-## [76] R6_2.4.1            generics_0.0.2      DBI_1.1.0          
-## [79] pillar_1.4.3        haven_2.2.0         withr_2.2.0        
-## [82] modelr_0.1.6        crayon_1.3.4        rmarkdown_2.1      
-## [85] viridis_0.5.1       progress_1.2.2      grid_3.6.1         
-## [88] readxl_1.3.1        data.table_1.12.8   blob_1.2.1         
-## [91] reprex_0.3.0        digest_0.6.25       webshot_0.5.2      
-## [94] gridGraphics_0.5-0  munsell_0.5.0       viridisLite_0.3.0  
-## [97] ggplotify_0.0.5</code></pre>
+##  [1] fgsea_1.10.1        colorspace_1.4-1    selectr_0.4-2      
+##  [4] ggridges_0.5.2      ellipsis_0.3.0      qvalue_2.16.0      
+##  [7] fs_1.4.1            rstudioapi_0.11     farver_2.0.3       
+## [10] urltools_1.7.3      graphlayouts_0.7.0  ggrepel_0.8.2      
+## [13] bit64_0.9-7         fansi_0.4.1         lubridate_1.7.8    
+## [16] xml2_1.3.2          splines_3.6.1       GOSemSim_2.10.0    
+## [19] polyclip_1.10-0     jsonlite_1.6.1      broom_0.5.6        
+## [22] GO.db_3.8.2         dbplyr_1.4.3        ggforce_0.3.1      
+## [25] BiocManager_1.30.10 compiler_3.6.1      httr_1.4.1         
+## [28] rvcheck_0.1.8       backports_1.1.6     assertthat_0.2.1   
+## [31] Matrix_1.2-18       cli_2.0.2           tweenr_1.0.1       
+## [34] htmltools_0.4.0     prettyunits_1.1.1   tools_3.6.1        
+## [37] igraph_1.2.5        gtable_0.3.0        glue_1.4.0         
+## [40] reshape2_1.4.4      DO.db_2.9           fastmatch_1.1-0    
+## [43] Rcpp_1.0.4.6        enrichplot_1.4.0    cellranger_1.1.0   
+## [46] vctrs_0.2.4         nlme_3.1-147        ggraph_2.0.2       
+## [49] xfun_0.13           rvest_0.3.5         lifecycle_0.2.0    
+## [52] DOSE_3.10.2         europepmc_0.3       MASS_7.3-51.6      
+## [55] scales_1.1.0        tidygraph_1.1.2     hms_0.5.3          
+## [58] RColorBrewer_1.1-2  yaml_2.2.1          memoise_1.1.0      
+## [61] gridExtra_2.3       UpSetR_1.4.0        triebeard_0.3.0    
+## [64] stringi_1.4.6       RSQLite_2.2.0       highr_0.8          
+## [67] BiocParallel_1.18.1 rlang_0.4.5         pkgconfig_2.0.3    
+## [70] evaluate_0.14       lattice_0.20-41     cowplot_1.0.0      
+## [73] bit_1.1-15.2        tidyselect_1.0.0    plyr_1.8.6         
+## [76] magrittr_1.5        R6_2.4.1            generics_0.0.2     
+## [79] DBI_1.1.0           pillar_1.4.3        haven_2.2.0        
+## [82] withr_2.2.0         modelr_0.1.7        crayon_1.3.4       
+## [85] rmarkdown_2.1       viridis_0.5.1       progress_1.2.2     
+## [88] grid_3.6.1          readxl_1.3.1        data.table_1.12.8  
+## [91] blob_1.2.1          reprex_0.3.0        digest_0.6.25      
+## [94] webshot_0.5.2       gridGraphics_0.5-0  munsell_0.5.0      
+## [97] viridisLite_0.3.0   ggplotify_0.0.5</code></pre>
 <hr />
 </div>
 
