@@ -1,0 +1,32 @@
+---
+title: "Project update"
+author: "Kim Dill-McFarland, kadm@uw.edu"
+date: "version `r format(Sys.time(), '%B %d, %Y')`"
+output: pdf_document
+subtitle: J. Shah chimeric mouse collaboration
+editor_options:
+  chunk_output_type: console
+---
+
+## Completed
+
+1. Change gene-level model to contrasts of WT:TKO within `uninfected` or `infected` samples
+2. Compare above contrasts model to previous interaction term model (`~status*cell`) 
+    - Roughly half of genes identified as significant in either model are also significant in the other model.
+    - Genes unique to the interaction model are only significant for infection status. Genes unique to the contrasts model were only significant for cell type within `infected` cells. 
+    - Thus, the contrasts model appears to be successfully removing much of the infection-only signal while amplifying cell type signal.
+3. Modules made from 4950 genes significant (FDR < 0.3) in contrasts model
+    - Resulted in 18 modules + 399 genes in module 0
+4. Contrasts model of modules
+    - All modules significant at FDR < 0.05
+    - 3 modules significant in uninfected, 5 in infected (ignore module 0), and 10 for both
+5. GSEA of significant genes and genes in each module
+
+## To discuss
+
+* Other methods for assigning function to modules
+* Additional analyses?
+
+***
+
+##
