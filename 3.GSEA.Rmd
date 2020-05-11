@@ -84,21 +84,22 @@ enrich.fxn(gene.list = gene.list,
            category = "H", genome = org.Mm.eg.db,
            basename="contrast_signif_genes")
 
-enrich.fxn(gene.list = gene.list,
-           category = "C5", genome = org.Mm.eg.db,
-           basename="contrast_signif_genes")
+#### Other gene sets not run ####
+#enrich.fxn(gene.list = gene.list,
+#           category = "C5", genome = org.Mm.eg.db,
+#           basename="contrast_signif_genes")
 
-enrich.fxn(gene.list = gene.list,
-           category = "C2", subcategory = "CGP", genome = org.Mm.eg.db,
-           basename="contrast_signif_genes")
+#enrich.fxn(gene.list = gene.list,
+#           category = "C2", subcategory = "CGP", genome = org.Mm.eg.db,
+#           basename="contrast_signif_genes")
 
-enrich.fxn(gene.list = gene.list,
-           category = "C2", subcategory = "CP:KEGG", genome = org.Mm.eg.db,
-           basename="contrast_signif_genes")
+#enrich.fxn(gene.list = gene.list,
+#           category = "C2", subcategory = "CP:KEGG", genome = org.Mm.eg.db,
+#           basename="contrast_signif_genes")
 
-enrich.fxn(gene.list = gene.list,
-           category = "C7", genome = org.Mm.eg.db,
-           basename="contrast_signif_genes")
+#enrich.fxn(gene.list = gene.list,
+#           category = "C7", genome = org.Mm.eg.db,
+#           basename="contrast_signif_genes")
 ```
 
 ### GSEA gene-level summary
@@ -107,16 +108,16 @@ Significant enrichments, FDR $\leq$ 0.05.
 
 ```{r warning=FALSE, echo=FALSE}
 GSEA.results <- bind_rows(mget(ls(pattern="contrast_signif_genes"))) %>% 
-  dplyr::select(Description, Count, p.adjust, category, subcategory) %>% 
-  arrange(category, subcategory, desc(Count))
+  dplyr::select(Description, Count, p.adjust, category) %>% 
+  arrange(category, desc(Count))
   
 GSEA.results %>% 
   filter(p.adjust<=0.05) %>% 
-  group_by(category, subcategory) %>% 
+  group_by(category) %>% 
   tally() %>%
   
-  kable(align=c("l","l","c"), 
-        col.names = c("Category", "Subcategory", "Significant terms")) %>% 
+  kable(align=c("l","c"), 
+        col.names = c("Category", "Significant terms")) %>% 
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
 
@@ -140,23 +141,24 @@ for(i in 0:max(mods.net$module)){
   enrich.fxn(gene.list = gene.list,
            category = "H", genome = org.Mm.eg.db,
            basename="module_genes")
+  
+  #### Other gene sets not run ####
+  #enrich.fxn(gene.list = gene.list,
+  #         category = "C5", genome = org.Mm.eg.db,
+  #         basename="module_genes")
 
-  enrich.fxn(gene.list = gene.list,
-           category = "C5", genome = org.Mm.eg.db,
-           basename="module_genes")
+  #enrich.fxn(gene.list = gene.list,
+  #         category = "C2", subcategory = "CGP", genome = org.Mm.eg.db,
+  #         basename="module_genes")
 
-  enrich.fxn(gene.list = gene.list,
-           category = "C2", subcategory = "CGP", genome = org.Mm.eg.db,
-           basename="module_genes")
+  #enrich.fxn(gene.list = gene.list,
+  #         category = "C2", subcategory = "CP:KEGG", 
+  #         genome = org.Mm.eg.db,
+  #         basename="module_genes")
 
-  enrich.fxn(gene.list = gene.list,
-           category = "C2", subcategory = "CP:KEGG", 
-           genome = org.Mm.eg.db,
-           basename="module_genes")
-
-  enrich.fxn(gene.list = gene.list,
-           category = "C7", genome = org.Mm.eg.db,
-           basename="module_genes")
+  #enrich.fxn(gene.list = gene.list,
+  #         category = "C7", genome = org.Mm.eg.db,
+  #         basename="module_genes")
   
   for(file in list.files(path="results/GSEA/",
                          pattern="module_genes",
@@ -207,24 +209,28 @@ for(db in unique(gsea.temp$category)){
 Significant enrichments, FDR $\leq$ 0.05.
 
 ```{r warning=FALSE, echo=FALSE, message=FALSE}
-files <- list.files(path="results/GSEA/", pattern="module_genes",
+file <- list.files(path="results/GSEA/", pattern="module_genes",
                     full.names = TRUE)
 
-GSEA.results2 <- bind_rows(read_csv(files[1]), read_csv(files[2]),
-                           read_csv(files[3]), read_csv(files[4]),
-                           read_csv(files[5])) %>% 
-  dplyr::select(Description, Count, p.adjust, category, subcategory,
+GSEA.results2 <- read_csv(file) %>% 
+  dplyr::select(Description, Count, p.adjust, category,
                 module) %>% 
-  arrange(category, subcategory, desc(Count))
+  arrange(category, desc(Count))
   
 GSEA.results2 %>% 
+  mutate(module=factor(module)) %>% 
   filter(p.adjust<=0.05) %>% 
-  group_by(module,category, subcategory) %>% 
+  group_by(module,category, .drop = FALSE) %>% 
   tally() %>%
+  ungroup() %>% 
+  mutate(category="H") %>% 
   
   kable(align=c("l","l","c"), 
-        col.names = c("Module", "Category", "Subcategory", 
+        col.names = c("Module", "Category", 
                       "Significant terms")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
   kable_styling(bootstrap_options = "striped", full_width = FALSE) %>% 
   collapse_rows(columns = 1, valign = "top")
 ```
