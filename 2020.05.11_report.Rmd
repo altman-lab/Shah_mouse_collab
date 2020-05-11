@@ -27,6 +27,11 @@ editor_options:
 * Other methods for assigning function to modules
 * Additional analyses?
 
-***
+## To-do
 
-##
+* GSEA of fold change module groups (*e.g.* up in uninfected, up in infected, up in both, etc)
+* Heatmap of module expression
+* Modify boxplots for publication
+* Point group to count files
+
+***
