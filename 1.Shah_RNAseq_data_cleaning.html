@@ -1527,7 +1527,7 @@ div.tocify {
 <h1 class="title toc-ignore">Summary of RNA-seq data cleaning</h1>
 <h3 class="subtitle">J. Shah chimeric mouse collaboration</h3>
 <h4 class="author">Kim Dill-McFarland, <a href="mailto:kadm@uw.edu" class="email">kadm@uw.edu</a></h4>
-<h4 class="date">version April 23, 2020</h4>
+<h4 class="date">version May 11, 2020</h4>
 
 </div>
 
@@ -2054,7 +2054,7 @@ save(dat.voom, file=&quot;data_clean/Shah.clean.RData&quot;)</code></pre>
 <p>Write counts as table.</p>
 <pre class="r"><code>#Counts table
 write_csv(as.data.frame(dat.pc.abund.norm.voom$E),
-          &quot;data_clean/Shah.clean.counts.csv&quot;)</code></pre>
+          &quot;results/gene_level/Shah_gene_voom_counts.csv&quot;)</code></pre>
 </div>
 <div id="r-session" class="section level1">
 <h1>R session</h1>
@@ -2076,22 +2076,22 @@ write_csv(as.data.frame(dat.pc.abund.norm.voom$E),
 ## other attached packages:
 ##  [1] kableExtra_1.1.0 knitr_1.28       edgeR_3.26.8     limma_3.40.6    
 ##  [5] cowplot_1.0.0    scales_1.1.0     drlib_0.1.1      forcats_0.5.0   
-##  [9] stringr_1.4.0    dplyr_0.8.5      purrr_0.3.4      tidyr_1.0.2     
+##  [9] stringr_1.4.0    dplyr_0.8.5      purrr_0.3.4      tidyr_1.0.3     
 ## [13] tibble_3.0.1     ggplot2_3.3.0    tidyverse_1.3.0  readr_1.3.1     
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_1.0.4.6       locfit_1.5-9.4     lubridate_1.7.8    lattice_0.20-41   
 ##  [5] assertthat_0.2.1   digest_0.6.25      utf8_1.1.4         R6_2.4.1          
 ##  [9] cellranger_1.1.0   backports_1.1.6    reprex_0.3.0       evaluate_0.14     
-## [13] highr_0.8          httr_1.4.1         pillar_1.4.3       rlang_0.4.5       
+## [13] highr_0.8          httr_1.4.1         pillar_1.4.4       rlang_0.4.6       
 ## [17] readxl_1.3.1       rstudioapi_0.11    Matrix_1.2-18      rmarkdown_2.1     
 ## [21] labeling_0.3       webshot_0.5.2      munsell_0.5.0      broom_0.5.6       
-## [25] compiler_3.6.1     modelr_0.1.6       xfun_0.13          pkgconfig_2.0.3   
+## [25] compiler_3.6.1     modelr_0.1.7       xfun_0.13          pkgconfig_2.0.3   
 ## [29] htmltools_0.4.0    tidyselect_1.0.0   fansi_0.4.1        viridisLite_0.3.0 
 ## [33] crayon_1.3.4       dbplyr_1.4.3       withr_2.2.0        grid_3.6.1        
 ## [37] nlme_3.1-147       jsonlite_1.6.1     gtable_0.3.0       lifecycle_0.2.0   
 ## [41] DBI_1.1.0          magrittr_1.5       cli_2.0.2          stringi_1.4.6     
-## [45] farver_2.0.3       fs_1.4.1           xml2_1.3.1         ellipsis_0.3.0    
+## [45] farver_2.0.3       fs_1.4.1           xml2_1.3.2         ellipsis_0.3.0    
 ## [49] generics_0.0.2     vctrs_0.2.4        RColorBrewer_1.1-2 tools_3.6.1       
 ## [53] glue_1.4.0         hms_0.5.3          yaml_2.2.1         colorspace_1.4-1  
 ## [57] rvest_0.3.5        haven_2.2.0</code></pre>

@@ -760,7 +760,7 @@ Write counts as table.
 ```{r}
 #Counts table
 write_csv(as.data.frame(dat.pc.abund.norm.voom$E),
-          "data_clean/Shah.clean.counts.csv")
+          "results/gene_level/Shah_gene_voom_counts.csv")
 ```
 
 # R session
