@@ -25,6 +25,8 @@ library(tidyverse)
 #Print pretty tables to Rmd
 library(knitr)
 library(kableExtra)
+
+`%notin%` <- Negate(`%in%`)
 ```
 
 Set seed
@@ -39,6 +41,9 @@ set.seed(4389)
 #Gene results
 Shah_contrast_gene_pval <-
   read_csv("results/gene_level/Shah_contrast_gene_pval.csv")
+#Module results
+mods.net <- read_csv("results/module_Shah_contrast_deepSplit3_minMod50/Shah_contrast_genes_in_mod.csv")
+
 #Genome
 library(org.Mm.eg.db)
 #Script for running GSEA
@@ -125,11 +130,7 @@ GSEA.results %>%
 
 List genes in each module.
 
-```{r}
-mods.net <- read_csv("results/module_Shah_contrast_deepSplit3_minMod50/Shah_contrast_genes_in_mod.csv")
-```
-
-```{r warning=FALSE, message=FALSE, results=FALSE, eval=FALSE}
+```{r warning=FALSE, message=FALSE, results=FALSE}
 gsea.temp <- data.frame()
 
 for(i in 0:max(mods.net$module)){
@@ -231,9 +232,193 @@ GSEA.results2 %>%
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
 
-  kable_styling(bootstrap_options = "striped", full_width = FALSE) %>% 
-  collapse_rows(columns = 1, valign = "top")
+## GSEA module DE groups
+
+Groups are:
+
+1. Up in uninfected only
+2. Down in uninfected only
+3. Up in infected only
+4. Down in infected only
+5. Up in both
+6. Down in both
+
+### Group genes in module 0
+
+Group genes with FDR < 0.3 in 6 module groups of interest.
+
+```{r}
+mod_0 <- Shah_contrast_gene_pval %>% 
+  filter(geneName %in% filter(mods.net, module == 0)$geneName &
+           adj.P.Val <= 0.3)
+
+mod_0_UI_up <- mod_0 %>% 
+  filter(group == "uninfected" & FC.group == "up") %>% 
+  dplyr::select(geneName) %>% 
+  distinct(geneName) %>%  unlist(use.names = FALSE)
+mod_0_UI_down <- mod_0 %>% 
+  filter(group == "uninfected" & FC.group == "down") %>% 
+  dplyr::select(geneName) %>% 
+  distinct(geneName) %>%  unlist(use.names = FALSE)
+
+mod_0_I_up <- mod_0 %>% 
+  filter(group == "infected" & FC.group == "up") %>% 
+  dplyr::select(geneName) %>% 
+  distinct(geneName) %>%  unlist(use.names = FALSE)
+mod_0_I_down <- mod_0 %>% 
+  filter(group == "infected" & FC.group == "down") %>% 
+  dplyr::select(geneName) %>% 
+  distinct(geneName) %>%  unlist(use.names = FALSE)
+
+mod_0_both_up <- intersect(mod_0_UI_up, mod_0_I_up)
+mod_0_both_down <- intersect(mod_0_UI_down, mod_0_I_down)
+
+mod_0_UI_up2 <- mod_0_UI_up[mod_0_UI_up %notin% 
+                          c(mod_0_UI_down,
+                            mod_0_I_up, mod_0_I_down)]
+mod_0_UI_down2 <- mod_0_UI_down[mod_0_UI_down %notin% 
+                           c(mod_0_UI_up,
+                            mod_0_I_up, mod_0_I_down)]
+  
+mod_0_I_up2 <- mod_0_I_up[mod_0_I_up %notin% 
+                           c(mod_0_UI_up, mod_0_UI_down,
+                            mod_0_I_down)]
+mod_0_I_down2 <- mod_0_I_down[mod_0_I_down %notin% 
+                            c(mod_0_UI_up, mod_0_UI_down,
+                            mod_0_I_up)]
 ```
+
+Sort genes that have different fold change directions in uninfected vs. infected. If one infection group is significant at FDR < 0.1, use that for grouping.
+
+```{r}
+#Check genes not in a group
+all <- c(mod_0_UI_up, mod_0_UI_down, mod_0_I_up, mod_0_I_down)
+all2 <- c(mod_0_both_up, mod_0_both_down,
+          mod_0_UI_up2, mod_0_UI_down2, 
+          mod_0_I_up2, mod_0_I_down2)
+
+missing <- mod_0 %>% 
+  filter(geneName %in% all[all %notin% all2]) %>% 
+  arrange(geneName, adj.P.Val)
+
+#Sort my hand
+mod_0_UI_up <- c(mod_0_UI_up2, "ENSMUSG00000036292")
+mod_0_UI_down <- c(mod_0_UI_down2)
+mod_0_I_up <- c(mod_0_I_up2, "ENSMUSG00000024935")
+mod_0_I_down <- c(mod_0_I_down2, "ENSMUSG00000030431")
+```
+
+These leaves 16 module 0 genes which were not grouped into a module FC group because they showed similarly significant but different directions in uninfected and infected groups.
+
+```{r}
+missing %>% 
+  filter(geneName %notin% c("ENSMUSG00000036292","ENSMUSG00000024935",
+                            "ENSMUSG00000030431")) %>% 
+  dplyr::select(geneName, mgi_symbol, adj.P.Val, group, FC.group) %>% 
+  
+ kable() %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE) %>% 
+  collapse_rows(columns = 1:2, valign = "top")
+```
+
+### Run GSEA
+
+```{r warning=FALSE, message=FALSE, results=FALSE}
+file.remove("results/GSEA/GSEA_module_groups_H.csv", showWarnings=FALSE)
+#Add groups to modules
+mods.net.groups <- mods.net %>% 
+  mutate(mod.group = ifelse(module %in% c(12,16,7,2,14), "both_up",
+                      ifelse(module %in% c(10,6,17,3,13), "both_down",
+                       ifelse(module %in% c(15), "UI_up",
+                        ifelse(module %in% c(11,18), "UI_down",
+                          ifelse(module %in% c(1,8), "I_up",
+                            ifelse(module %in% c(4,9,5), "I_down",
+                                   NA))))))) %>% 
+  filter(module != 0)
+
+for(mod.group.name in c("both_up", "both_down",
+              "UI_up", "UI_down", 
+              "I_up", "I_down")){
+  
+  from_mods <- mods.net.groups %>% 
+    filter(mod.group == mod.group.name) %>% 
+    dplyr::select(geneName) %>% 
+    distinct() %>% unlist(use.names = FALSE)
+    
+  from_mod0 <- get(paste("mod_0", mod.group.name, sep="_"))
+  
+  gene.list.all <- unique(c(from_mods, from_mod0))
+  
+  #Run custom function on genes
+  enrich.fxn(gene.list = gene.list.all,
+           category = "H", genome = org.Mm.eg.db,
+           basename=paste(mod.group.name, length(gene.list.all), sep="_"))
+}
+
+#Combine results
+files <- list.files(path="results/GSEA/",
+                         pattern="down|up",
+                         full.names = TRUE)
+
+gsea.result3 <- data.frame()
+for(i in 1:length(files)){
+  group.name <- gsub("results/GSEA//GSEA_", "", files[i])
+  group.name <- gsub("_H.csv", "", group.name)
+  group.name <- gsub("UI_", "uninfected_", group.name)
+  group.name <- gsub("I_", "infected_", group.name)
+  
+  gsea.temp <- read_csv(files[i]) %>% 
+    #Add module group name
+    mutate(mod.group = group.name) %>% 
+    #Get number of genes from name
+    separate(mod.group, into=c("mod.group","size.mod.group"), 
+             sep="_(?=[^_]+$)") %>% 
+    #Extract values from ratios
+    separate(BgRatio, into=c("size.term","size.category"), sep="/") %>% 
+    separate(GeneRatio, into=c("size.overlap.term","size.overlap.category"),
+             sep="/") %>% 
+    mutate_at(vars("size.term","size.category",
+                   "size.overlap.term","size.overlap.category"),
+                   as.numeric) %>% 
+    #Calculate k/K
+    mutate("k/K"=size.overlap.term/size.term) %>% 
+    
+    #Reorder variables
+    dplyr::select(category, mod.group, 
+                  size.mod.group, size.overlap.category, size.category,
+                  Description, size.overlap.term, size.term, `k/K`,
+                  p.adjust, ENTREZIDs:ENSEMBLIDs) %>% 
+    arrange(p.adjust)
+  
+ gsea.result3 <- bind_rows(gsea.result3, gsea.temp) 
+}
+
+#Save to disk
+write_csv(gsea.result3, "results/GSEA/GSEA_module_groups_H.csv")
+
+file.remove(files, showWarnings=FALSE)
+```
+
+### GSEA module group summary
+
+Significant enrichments, FDR $\leq$ 0.05.
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+gsea.result3 %>% 
+  filter(p.adjust<=0.05) %>% 
+  arrange(mod.group) %>%
+  dplyr::select(category, mod.group, size.mod.group,
+                Description:p.adjust) %>% 
+ 
+  kable(col.names = c("Category", "Module group", "Genes in module group",
+                      "Description", "Genes in overlap (k)", 
+                      "Genes in term (K)", "k/K",
+                      "FDR")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE) %>% 
+  collapse_rows(columns = 1:3, valign = "top")
+```
+
+Note that the group `uninfected_down` did not have any significant terms. The lowest FDR was `r min(filter(gsea.result3, mod.group=="uninfected_down")$p.adjust)`
 
 # R session
 

@@ -1527,7 +1527,7 @@ div.tocify {
 <h1 class="title toc-ignore">Gene set enrichment analysis (GSEA)</h1>
 <h3 class="subtitle">J. Shah chimeric mouse collaboration</h3>
 <h4 class="author">Kim Dill-McFarland, <a href="mailto:kadm@uw.edu" class="email">kadm@uw.edu</a></h4>
-<h4 class="date">version May 07, 2020</h4>
+<h4 class="date">version May 11, 2020</h4>
 
 </div>
 
@@ -1544,7 +1544,9 @@ library(tidyverse)
 
 #Print pretty tables to Rmd
 library(knitr)
-library(kableExtra)</code></pre>
+library(kableExtra)
+
+`%notin%` &lt;- Negate(`%in%`)</code></pre>
 <p>Set seed</p>
 <pre class="r"><code>set.seed(4389)</code></pre>
 </div>
@@ -1553,6 +1555,9 @@ library(kableExtra)</code></pre>
 <pre class="r"><code>#Gene results
 Shah_contrast_gene_pval &lt;-
   read_csv(&quot;results/gene_level/Shah_contrast_gene_pval.csv&quot;)
+#Module results
+mods.net &lt;- read_csv(&quot;results/module_Shah_contrast_deepSplit3_minMod50/Shah_contrast_genes_in_mod.csv&quot;)
+
 #Genome
 library(org.Mm.eg.db)
 #Script for running GSEA
@@ -1604,21 +1609,22 @@ enrich.fxn(gene.list = gene.list,
            category = &quot;H&quot;, genome = org.Mm.eg.db,
            basename=&quot;contrast_signif_genes&quot;)
 
-enrich.fxn(gene.list = gene.list,
-           category = &quot;C5&quot;, genome = org.Mm.eg.db,
-           basename=&quot;contrast_signif_genes&quot;)
+#### Other gene sets not run ####
+#enrich.fxn(gene.list = gene.list,
+#           category = &quot;C5&quot;, genome = org.Mm.eg.db,
+#           basename=&quot;contrast_signif_genes&quot;)
 
-enrich.fxn(gene.list = gene.list,
-           category = &quot;C2&quot;, subcategory = &quot;CGP&quot;, genome = org.Mm.eg.db,
-           basename=&quot;contrast_signif_genes&quot;)
+#enrich.fxn(gene.list = gene.list,
+#           category = &quot;C2&quot;, subcategory = &quot;CGP&quot;, genome = org.Mm.eg.db,
+#           basename=&quot;contrast_signif_genes&quot;)
 
-enrich.fxn(gene.list = gene.list,
-           category = &quot;C2&quot;, subcategory = &quot;CP:KEGG&quot;, genome = org.Mm.eg.db,
-           basename=&quot;contrast_signif_genes&quot;)
+#enrich.fxn(gene.list = gene.list,
+#           category = &quot;C2&quot;, subcategory = &quot;CP:KEGG&quot;, genome = org.Mm.eg.db,
+#           basename=&quot;contrast_signif_genes&quot;)
 
-enrich.fxn(gene.list = gene.list,
-           category = &quot;C7&quot;, genome = org.Mm.eg.db,
-           basename=&quot;contrast_signif_genes&quot;)</code></pre>
+#enrich.fxn(gene.list = gene.list,
+#           category = &quot;C7&quot;, genome = org.Mm.eg.db,
+#           basename=&quot;contrast_signif_genes&quot;)</code></pre>
 <div id="gsea-gene-level-summary" class="section level3">
 <h3>GSEA gene-level summary</h3>
 <p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.05.</p>
@@ -1628,9 +1634,6 @@ enrich.fxn(gene.list = gene.list,
 <th style="text-align:left;">
 Category
 </th>
-<th style="text-align:left;">
-Subcategory
-</th>
 <th style="text-align:center;">
 Significant terms
 </th>
@@ -1639,54 +1642,7 @@ Significant terms
 <tbody>
 <tr>
 <td style="text-align:left;">
-C2
-</td>
-<td style="text-align:left;">
-CGP
-</td>
-<td style="text-align:center;">
-111
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:left;">
-CP:KEGG
-</td>
-<td style="text-align:center;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C5
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:center;">
-249
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:center;">
-560
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 H
-</td>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:center;">
 1
@@ -1699,16 +1655,6 @@ NA
 <div id="gsea-module-level" class="section level2">
 <h2>GSEA module-level</h2>
 <p>List genes in each module.</p>
-<pre class="r"><code>mods.net &lt;- read_csv(&quot;results/module_Shah_contrast_deepSplit3_minMod50/Shah_contrast_genes_in_mod.csv&quot;)</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   geneName = col_character(),
-##   module = col_double(),
-##   mgi_symbol = col_character(),
-##   gene_biotype = col_character(),
-##   module.char = col_character(),
-##   mod.color = col_character()
-## )</code></pre>
 <pre class="r"><code>gsea.temp &lt;- data.frame()
 
 for(i in 0:max(mods.net$module)){
@@ -1720,23 +1666,24 @@ for(i in 0:max(mods.net$module)){
   enrich.fxn(gene.list = gene.list,
            category = &quot;H&quot;, genome = org.Mm.eg.db,
            basename=&quot;module_genes&quot;)
+  
+  #### Other gene sets not run ####
+  #enrich.fxn(gene.list = gene.list,
+  #         category = &quot;C5&quot;, genome = org.Mm.eg.db,
+  #         basename=&quot;module_genes&quot;)
 
-  enrich.fxn(gene.list = gene.list,
-           category = &quot;C5&quot;, genome = org.Mm.eg.db,
-           basename=&quot;module_genes&quot;)
+  #enrich.fxn(gene.list = gene.list,
+  #         category = &quot;C2&quot;, subcategory = &quot;CGP&quot;, genome = org.Mm.eg.db,
+  #         basename=&quot;module_genes&quot;)
 
-  enrich.fxn(gene.list = gene.list,
-           category = &quot;C2&quot;, subcategory = &quot;CGP&quot;, genome = org.Mm.eg.db,
-           basename=&quot;module_genes&quot;)
+  #enrich.fxn(gene.list = gene.list,
+  #         category = &quot;C2&quot;, subcategory = &quot;CP:KEGG&quot;, 
+  #         genome = org.Mm.eg.db,
+  #         basename=&quot;module_genes&quot;)
 
-  enrich.fxn(gene.list = gene.list,
-           category = &quot;C2&quot;, subcategory = &quot;CP:KEGG&quot;, 
-           genome = org.Mm.eg.db,
-           basename=&quot;module_genes&quot;)
-
-  enrich.fxn(gene.list = gene.list,
-           category = &quot;C7&quot;, genome = org.Mm.eg.db,
-           basename=&quot;module_genes&quot;)
+  #enrich.fxn(gene.list = gene.list,
+  #         category = &quot;C7&quot;, genome = org.Mm.eg.db,
+  #         basename=&quot;module_genes&quot;)
   
   for(file in list.files(path=&quot;results/GSEA/&quot;,
                          pattern=&quot;module_genes&quot;,
@@ -1793,507 +1740,141 @@ Module
 Category
 </th>
 <th style="text-align:center;">
-Subcategory
-</th>
-<th style="text-align:left;">
 Significant terms
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="5">
-1
-</td>
 <td style="text-align:left;">
-C2
+0
 </td>
-<td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-137
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CP:KEGG
-</td>
-<td style="text-align:left;">
-8
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-187
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-683
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 H
 </td>
 <td style="text-align:center;">
-NA
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1
 </td>
 <td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
 4
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="5">
-2
-</td>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-68
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CP:KEGG
-</td>
 <td style="text-align:left;">
 2
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-97
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-460
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 H
 </td>
 <td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
 5
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+<td style="text-align:left;">
 3
 </td>
 <td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-27
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CP:KEGG
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-29
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-418
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 H
 </td>
 <td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
 2
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="3">
+<td style="text-align:left;">
 4
 </td>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-39
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-28
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-178
-</td>
-</tr>
-<tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="3">
-5
-</td>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-20
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-123
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 H
 </td>
 <td style="text-align:center;">
-NA
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
 </td>
 <td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
 1
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+<td style="text-align:left;">
 6
 </td>
 <td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-166
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CP:KEGG
-</td>
-<td style="text-align:left;">
-2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-131
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-744
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 H
 </td>
 <td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
 3
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="3">
+<td style="text-align:left;">
 7
 </td>
 <td style="text-align:left;">
-C2
+H
 </td>
 <td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-17
+0
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-4
-</td>
-</tr>
-<tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="4">
 8
 </td>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-31
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-21
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-96
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 H
 </td>
 <td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
 1
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="3">
+<td style="text-align:left;">
 9
 </td>
 <td style="text-align:left;">
-C2
+H
 </td>
 <td style="text-align:center;">
-CP:KEGG
-</td>
-<td style="text-align:left;">
-14
+0
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-8
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-19
-</td>
-</tr>
-<tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="3">
 10
 </td>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CP:KEGG
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 H
 </td>
 <td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
 1
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="3">
-11
-</td>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-29
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
 <td style="text-align:left;">
 11
 </td>
-</tr>
-<tr>
 <td style="text-align:left;">
-C7
+H
 </td>
 <td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-202
+0
 </td>
 </tr>
 <tr>
@@ -2301,106 +1882,31 @@ NA
 12
 </td>
 <td style="text-align:left;">
-C5
+H
 </td>
 <td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-40
+0
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="4">
+<td style="text-align:left;">
 13
 </td>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CP:KEGG
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-16
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-120
-</td>
-</tr>
-<tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="4">
-14
-</td>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-4
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 H
 </td>
 <td style="text-align:center;">
-NA
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
 </td>
 <td style="text-align:left;">
+H
+</td>
+<td style="text-align:center;">
 1
 </td>
 </tr>
@@ -2412,67 +1918,17 @@ NA
 H
 </td>
 <td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
 1
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="5">
-16
-</td>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CGP
-</td>
 <td style="text-align:left;">
 16
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CP:KEGG
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-9
-</td>
-</tr>
-<tr>
 <td style="text-align:left;">
 H
 </td>
 <td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
 2
 </td>
 </tr>
@@ -2481,64 +1937,942 @@ NA
 17
 </td>
 <td style="text-align:left;">
-C2
+H
 </td>
 <td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-1
+0
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="4">
+<td style="text-align:left;">
 18
 </td>
 <td style="text-align:left;">
-C2
+H
 </td>
 <td style="text-align:center;">
-CGP
-</td>
-<td style="text-align:left;">
-7
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C2
-</td>
-<td style="text-align:center;">
-CP:KEGG
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C5
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-C7
-</td>
-<td style="text-align:center;">
-NA
-</td>
-<td style="text-align:left;">
-3
+0
 </td>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div id="gsea-module-de-groups" class="section level2">
+<h2>GSEA module DE groups</h2>
+<p>Groups are:</p>
+<ol style="list-style-type: decimal">
+<li>Up in uninfected only</li>
+<li>Down in uninfected only</li>
+<li>Up in infected only</li>
+<li>Down in infected only</li>
+<li>Up in both</li>
+<li>Down in both</li>
+</ol>
+<div id="group-genes-in-module-0" class="section level3">
+<h3>Group genes in module 0</h3>
+<p>Group genes with FDR &lt; 0.3 in 6 module groups of interest.</p>
+<pre class="r"><code>mod_0 &lt;- Shah_contrast_gene_pval %&gt;% 
+  filter(geneName %in% filter(mods.net, module == 0)$geneName &amp;
+           adj.P.Val &lt;= 0.3)
+
+mod_0_UI_up &lt;- mod_0 %&gt;% 
+  filter(group == &quot;uninfected&quot; &amp; FC.group == &quot;up&quot;) %&gt;% 
+  dplyr::select(geneName) %&gt;% 
+  distinct(geneName) %&gt;%  unlist(use.names = FALSE)
+mod_0_UI_down &lt;- mod_0 %&gt;% 
+  filter(group == &quot;uninfected&quot; &amp; FC.group == &quot;down&quot;) %&gt;% 
+  dplyr::select(geneName) %&gt;% 
+  distinct(geneName) %&gt;%  unlist(use.names = FALSE)
+
+mod_0_I_up &lt;- mod_0 %&gt;% 
+  filter(group == &quot;infected&quot; &amp; FC.group == &quot;up&quot;) %&gt;% 
+  dplyr::select(geneName) %&gt;% 
+  distinct(geneName) %&gt;%  unlist(use.names = FALSE)
+mod_0_I_down &lt;- mod_0 %&gt;% 
+  filter(group == &quot;infected&quot; &amp; FC.group == &quot;down&quot;) %&gt;% 
+  dplyr::select(geneName) %&gt;% 
+  distinct(geneName) %&gt;%  unlist(use.names = FALSE)
+
+mod_0_both_up &lt;- intersect(mod_0_UI_up, mod_0_I_up)
+mod_0_both_down &lt;- intersect(mod_0_UI_down, mod_0_I_down)
+
+mod_0_UI_up2 &lt;- mod_0_UI_up[mod_0_UI_up %notin% 
+                          c(mod_0_UI_down,
+                            mod_0_I_up, mod_0_I_down)]
+mod_0_UI_down2 &lt;- mod_0_UI_down[mod_0_UI_down %notin% 
+                           c(mod_0_UI_up,
+                            mod_0_I_up, mod_0_I_down)]
+  
+mod_0_I_up2 &lt;- mod_0_I_up[mod_0_I_up %notin% 
+                           c(mod_0_UI_up, mod_0_UI_down,
+                            mod_0_I_down)]
+mod_0_I_down2 &lt;- mod_0_I_down[mod_0_I_down %notin% 
+                            c(mod_0_UI_up, mod_0_UI_down,
+                            mod_0_I_up)]</code></pre>
+<p>Sort genes that have different fold change directions in uninfected vs. infected. If one infection group is significant at FDR &lt; 0.1, use that for grouping.</p>
+<pre class="r"><code>#Check genes not in a group
+all &lt;- c(mod_0_UI_up, mod_0_UI_down, mod_0_I_up, mod_0_I_down)
+all2 &lt;- c(mod_0_both_up, mod_0_both_down,
+          mod_0_UI_up2, mod_0_UI_down2, 
+          mod_0_I_up2, mod_0_I_down2)
+
+missing &lt;- mod_0 %&gt;% 
+  filter(geneName %in% all[all %notin% all2]) %&gt;% 
+  arrange(geneName, adj.P.Val)
+
+#Sort my hand
+mod_0_UI_up &lt;- c(mod_0_UI_up2, &quot;ENSMUSG00000036292&quot;)
+mod_0_UI_down &lt;- c(mod_0_UI_down2)
+mod_0_I_up &lt;- c(mod_0_I_up2, &quot;ENSMUSG00000024935&quot;)
+mod_0_I_down &lt;- c(mod_0_I_down2, &quot;ENSMUSG00000030431&quot;)</code></pre>
+<p>These leaves 16 module 0 genes which were not grouped into a module FC group because they showed similarly significant but different directions in uninfected and infected groups.</p>
+<pre class="r"><code>missing %&gt;% 
+  filter(geneName %notin% c(&quot;ENSMUSG00000036292&quot;,&quot;ENSMUSG00000024935&quot;,
+                            &quot;ENSMUSG00000030431&quot;)) %&gt;% 
+  dplyr::select(geneName, mgi_symbol, adj.P.Val, group, FC.group) %&gt;% 
+  
+ kable() %&gt;% 
+  kable_styling(bootstrap_options = &quot;striped&quot;, full_width = FALSE) %&gt;% 
+  collapse_rows(columns = 1:2, valign = &quot;top&quot;)</code></pre>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+geneName
+</th>
+<th style="text-align:left;">
+mgi_symbol
+</th>
+<th style="text-align:right;">
+adj.P.Val
+</th>
+<th style="text-align:left;">
+group
+</th>
+<th style="text-align:left;">
+FC.group
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000007646
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Rad51c
+</td>
+<td style="text-align:right;">
+0.1476619
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1849470
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000010651
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Acaa1b
+</td>
+<td style="text-align:right;">
+0.1868235
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2372878
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000026275
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Ppp1r7
+</td>
+<td style="text-align:right;">
+0.2664345
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2984577
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000027570
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Col9a3
+</td>
+<td style="text-align:right;">
+0.1562868
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2524983
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000034898
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Filip1
+</td>
+<td style="text-align:right;">
+0.1434451
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1522366
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000035165
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Kcne3
+</td>
+<td style="text-align:right;">
+0.2640174
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2976839
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000037818
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Abhd18
+</td>
+<td style="text-align:right;">
+0.1434129
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2145669
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000044005
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Gls2
+</td>
+<td style="text-align:right;">
+0.1312718
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1421707
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000050965
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Prkca
+</td>
+<td style="text-align:right;">
+0.2049788
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2640502
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000054716
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Zfp771
+</td>
+<td style="text-align:right;">
+0.1959354
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2243708
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000071291
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Zfp58
+</td>
+<td style="text-align:right;">
+0.2008224
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2604671
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000072919
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Noxred1
+</td>
+<td style="text-align:right;">
+0.2031878
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2600235
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000073650
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Catip
+</td>
+<td style="text-align:right;">
+0.1803427
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2617117
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000090121
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Abhd12b
+</td>
+<td style="text-align:right;">
+0.1219917
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1935305
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000092260
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+Zfp963
+</td>
+<td style="text-align:right;">
+0.1387331
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1978112
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+ENSMUSG00000100937
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+1700020D05Rik
+</td>
+<td style="text-align:right;">
+0.1095091
+</td>
+<td style="text-align:left;">
+infected
+</td>
+<td style="text-align:left;">
+up
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1752322
+</td>
+<td style="text-align:left;">
+uninfected
+</td>
+<td style="text-align:left;">
+down
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="run-gsea" class="section level3">
+<h3>Run GSEA</h3>
+<pre class="r"><code>file.remove(&quot;results/GSEA/GSEA_module_groups_H.csv&quot;, showWarnings=FALSE)
+#Add groups to modules
+mods.net.groups &lt;- mods.net %&gt;% 
+  mutate(mod.group = ifelse(module %in% c(12,16,7,2,14), &quot;both_up&quot;,
+                      ifelse(module %in% c(10,6,17,3,13), &quot;both_down&quot;,
+                       ifelse(module %in% c(15), &quot;UI_up&quot;,
+                        ifelse(module %in% c(11,18), &quot;UI_down&quot;,
+                          ifelse(module %in% c(1,8), &quot;I_up&quot;,
+                            ifelse(module %in% c(4,9,5), &quot;I_down&quot;,
+                                   NA))))))) %&gt;% 
+  filter(module != 0)
+
+for(mod.group.name in c(&quot;both_up&quot;, &quot;both_down&quot;,
+              &quot;UI_up&quot;, &quot;UI_down&quot;, 
+              &quot;I_up&quot;, &quot;I_down&quot;)){
+  
+  from_mods &lt;- mods.net.groups %&gt;% 
+    filter(mod.group == mod.group.name) %&gt;% 
+    dplyr::select(geneName) %&gt;% 
+    distinct() %&gt;% unlist(use.names = FALSE)
+    
+  from_mod0 &lt;- get(paste(&quot;mod_0&quot;, mod.group.name, sep=&quot;_&quot;))
+  
+  gene.list.all &lt;- unique(c(from_mods, from_mod0))
+  
+  #Run custom function on genes
+  enrich.fxn(gene.list = gene.list.all,
+           category = &quot;H&quot;, genome = org.Mm.eg.db,
+           basename=paste(mod.group.name, length(gene.list.all), sep=&quot;_&quot;))
+}
+
+#Combine results
+files &lt;- list.files(path=&quot;results/GSEA/&quot;,
+                         pattern=&quot;down|up&quot;,
+                         full.names = TRUE)
+
+gsea.result3 &lt;- data.frame()
+for(i in 1:length(files)){
+  group.name &lt;- gsub(&quot;results/GSEA//GSEA_&quot;, &quot;&quot;, files[i])
+  group.name &lt;- gsub(&quot;_H.csv&quot;, &quot;&quot;, group.name)
+  group.name &lt;- gsub(&quot;UI_&quot;, &quot;uninfected_&quot;, group.name)
+  group.name &lt;- gsub(&quot;I_&quot;, &quot;infected_&quot;, group.name)
+  
+  gsea.temp &lt;- read_csv(files[i]) %&gt;% 
+    #Add module group name
+    mutate(mod.group = group.name) %&gt;% 
+    #Get number of genes from name
+    separate(mod.group, into=c(&quot;mod.group&quot;,&quot;size.mod.group&quot;), 
+             sep=&quot;_(?=[^_]+$)&quot;) %&gt;% 
+    #Extract values from ratios
+    separate(BgRatio, into=c(&quot;size.term&quot;,&quot;size.category&quot;), sep=&quot;/&quot;) %&gt;% 
+    separate(GeneRatio, into=c(&quot;size.overlap.term&quot;,&quot;size.overlap.category&quot;),
+             sep=&quot;/&quot;) %&gt;% 
+    mutate_at(vars(&quot;size.term&quot;,&quot;size.category&quot;,
+                   &quot;size.overlap.term&quot;,&quot;size.overlap.category&quot;),
+                   as.numeric) %&gt;% 
+    #Calculate k/K
+    mutate(&quot;k/K&quot;=size.overlap.term/size.term) %&gt;% 
+    
+    #Reorder variables
+    dplyr::select(category, mod.group, 
+                  size.mod.group, size.overlap.category, size.category,
+                  Description, size.overlap.term, size.term, `k/K`,
+                  p.adjust, ENTREZIDs:ENSEMBLIDs) %&gt;% 
+    arrange(p.adjust)
+  
+ gsea.result3 &lt;- bind_rows(gsea.result3, gsea.temp) 
+}
+
+#Save to disk
+write_csv(gsea.result3, &quot;results/GSEA/GSEA_module_groups_H.csv&quot;)
+
+file.remove(files, showWarnings=FALSE)</code></pre>
+</div>
+<div id="gsea-module-group-summary" class="section level3">
+<h3>GSEA module group summary</h3>
+<p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.05.</p>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Category
+</th>
+<th style="text-align:left;">
+Module group
+</th>
+<th style="text-align:left;">
+Genes in module group
+</th>
+<th style="text-align:left;">
+Description
+</th>
+<th style="text-align:right;">
+Genes in overlap (k)
+</th>
+<th style="text-align:right;">
+Genes in term (K)
+</th>
+<th style="text-align:right;">
+k/K
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="13">
+H
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+both_down
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+1202
+</td>
+<td style="text-align:left;">
+HALLMARK_INFLAMMATORY_RESPONSE
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+199
+</td>
+<td style="text-align:right;">
+0.1758794
+</td>
+<td style="text-align:right;">
+0.0004208
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_MITOTIC_SPINDLE
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+199
+</td>
+<td style="text-align:right;">
+0.1557789
+</td>
+<td style="text-align:right;">
+0.0074126
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="4">
+both_up
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="4">
+1193
+</td>
+<td style="text-align:left;">
+HALLMARK_CHOLESTEROL_HOMEOSTASIS
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+74
+</td>
+<td style="text-align:right;">
+0.2297297
+</td>
+<td style="text-align:right;">
+0.0019567
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_ADIPOGENESIS
+</td>
+<td style="text-align:right;">
+33
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
+0.1650000
+</td>
+<td style="text-align:right;">
+0.0019567
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_FATTY_ACID_METABOLISM
+</td>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+0.1500000
+</td>
+<td style="text-align:right;">
+0.0451859
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_TNFA_SIGNALING_VIA_NFKB
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
+0.1400000
+</td>
+<td style="text-align:right;">
+0.0451859
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+infected_down
+</td>
+<td style="text-align:left;">
+1042
+</td>
+<td style="text-align:left;">
+HALLMARK_MITOTIC_SPINDLE
+</td>
+<td style="text-align:right;">
+38
+</td>
+<td style="text-align:right;">
+199
+</td>
+<td style="text-align:right;">
+0.1909548
+</td>
+<td style="text-align:right;">
+0.0000001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+infected_up
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+969
+</td>
+<td style="text-align:left;">
+HALLMARK_OXIDATIVE_PHOSPHORYLATION
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:right;">
+198
+</td>
+<td style="text-align:right;">
+0.2878788
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_MYC_TARGETS_V1
+</td>
+<td style="text-align:right;">
+41
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
+0.2050000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_INTERFERON_GAMMA_RESPONSE
+</td>
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:right;">
+208
+</td>
+<td style="text-align:right;">
+0.1298077
+</td>
+<td style="text-align:right;">
+0.0113599
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_INTERFERON_ALPHA_RESPONSE
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+0.1568627
+</td>
+<td style="text-align:right;">
+0.0118043
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_DNA_REPAIR
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+150
+</td>
+<td style="text-align:right;">
+0.1400000
+</td>
+<td style="text-align:right;">
+0.0118043
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+uninfected_up
+</td>
+<td style="text-align:left;">
+218
+</td>
+<td style="text-align:left;">
+HALLMARK_ESTROGEN_RESPONSE_LATE
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+206
+</td>
+<td style="text-align:right;">
+0.0436893
+</td>
+<td style="text-align:right;">
+0.0373333
+</td>
+</tr>
+</tbody>
+</table>
+<p>Note that the group <code>uninfected_down</code> did not have any significant terms. The lowest FDR was 0.4348007</p>
 </div>
 </div>
 </div>
@@ -2566,7 +2900,7 @@ NA
 ##  [7] S4Vectors_0.22.1       Biobase_2.44.0         BiocGenerics_0.30.0   
 ## [10] kableExtra_1.1.0       knitr_1.28             forcats_0.5.0         
 ## [13] stringr_1.4.0          dplyr_0.8.5            purrr_0.3.4           
-## [16] readr_1.3.1            tidyr_1.0.2            tibble_3.0.1          
+## [16] readr_1.3.1            tidyr_1.0.3            tibble_3.0.1          
 ## [19] ggplot2_3.3.0          tidyverse_1.3.0       
 ## 
 ## loaded via a namespace (and not attached):
@@ -2592,11 +2926,11 @@ NA
 ## [58] RColorBrewer_1.1-2  yaml_2.2.1          memoise_1.1.0      
 ## [61] gridExtra_2.3       UpSetR_1.4.0        triebeard_0.3.0    
 ## [64] stringi_1.4.6       RSQLite_2.2.0       highr_0.8          
-## [67] BiocParallel_1.18.1 rlang_0.4.5         pkgconfig_2.0.3    
+## [67] BiocParallel_1.18.1 rlang_0.4.6         pkgconfig_2.0.3    
 ## [70] evaluate_0.14       lattice_0.20-41     cowplot_1.0.0      
 ## [73] bit_1.1-15.2        tidyselect_1.0.0    plyr_1.8.6         
 ## [76] magrittr_1.5        R6_2.4.1            generics_0.0.2     
-## [79] DBI_1.1.0           pillar_1.4.3        haven_2.2.0        
+## [79] DBI_1.1.0           pillar_1.4.4        haven_2.2.0        
 ## [82] withr_2.2.0         modelr_0.1.7        crayon_1.3.4       
 ## [85] rmarkdown_2.1       viridis_0.5.1       progress_1.2.2     
 ## [88] grid_3.6.1          readxl_1.3.1        data.table_1.12.8  
