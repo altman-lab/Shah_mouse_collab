@@ -2053,8 +2053,9 @@ dat.voom &lt;- dat.pc.abund.norm.voom
 save(dat.voom, file=&quot;data_clean/Shah.clean.RData&quot;)</code></pre>
 <p>Write counts as table.</p>
 <pre class="r"><code>#Counts table
-write_csv(as.data.frame(dat.pc.abund.norm.voom$E),
-          &quot;results/gene_level/Shah_gene_voom_counts.csv&quot;)</code></pre>
+as.data.frame(dat.pc.abund.norm.voom$E) %&gt;% 
+  rownames_to_column(&quot;geneName&quot;) %&gt;% 
+write_csv(&quot;results/gene_level/Shah_gene_voom_counts.csv&quot;)</code></pre>
 </div>
 <div id="r-session" class="section level1">
 <h1>R session</h1>

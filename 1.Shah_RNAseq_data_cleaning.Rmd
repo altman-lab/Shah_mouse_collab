@@ -759,8 +759,9 @@ Write counts as table.
 
 ```{r}
 #Counts table
-write_csv(as.data.frame(dat.pc.abund.norm.voom$E),
-          "results/gene_level/Shah_gene_voom_counts.csv")
+as.data.frame(dat.pc.abund.norm.voom$E) %>% 
+  rownames_to_column("geneName") %>% 
+write_csv("results/gene_level/Shah_gene_voom_counts.csv")
 ```
 
 # R session
