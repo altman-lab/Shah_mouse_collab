@@ -1527,7 +1527,7 @@ div.tocify {
 <h1 class="title toc-ignore">Gene set enrichment analysis (GSEA)</h1>
 <h3 class="subtitle">J. Shah chimeric mouse collaboration</h3>
 <h4 class="author">Kim Dill-McFarland, <a href="mailto:kadm@uw.edu" class="email">kadm@uw.edu</a></h4>
-<h4 class="date">version May 11, 2020</h4>
+<h4 class="date">version May 12, 2020</h4>
 
 </div>
 
@@ -1627,15 +1627,21 @@ enrich.fxn(gene.list = gene.list,
 #           basename=&quot;contrast_signif_genes&quot;)</code></pre>
 <div id="gsea-gene-level-summary" class="section level3">
 <h3>GSEA gene-level summary</h3>
-<p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.05.</p>
+<p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.2.</p>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
 <th style="text-align:left;">
 Category
 </th>
-<th style="text-align:center;">
-Significant terms
+<th style="text-align:left;">
+Description
+</th>
+<th style="text-align:right;">
+Overlap genes
+</th>
+<th style="text-align:right;">
+FDR
 </th>
 </tr>
 </thead>
@@ -1644,8 +1650,14 @@ Significant terms
 <td style="text-align:left;">
 H
 </td>
-<td style="text-align:center;">
-1
+<td style="text-align:left;">
+HALLMARK_ALLOGRAFT_REJECTION
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+0.067906
 </td>
 </tr>
 </tbody>
@@ -1729,42 +1741,87 @@ for(db in unique(gsea.temp$category)){
 }</code></pre>
 <div id="gsea-module-level-summary" class="section level3">
 <h3>GSEA module-level summary</h3>
-<p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.05.</p>
+<p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.2.</p>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
 <th style="text-align:left;">
+Category
+</th>
+<th style="text-align:left;">
 Module
 </th>
 <th style="text-align:left;">
-Category
+Description
 </th>
-<th style="text-align:center;">
-Significant terms
+<th style="text-align:right;">
+Overlap genes
+</th>
+<th style="text-align:right;">
+FDR
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
-0
-</td>
-<td style="text-align:left;">
+<td style="text-align:left;vertical-align: top !important;" rowspan="36">
 H
 </td>
-<td style="text-align:center;">
-0
+<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+1
+</td>
+<td style="text-align:left;">
+HALLMARK_OXIDATIVE_PHOSPHORYLATION
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+0.0000000
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-1
+HALLMARK_MYC_TARGETS_V1
 </td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:right;">
+0.0002332
+</td>
+</tr>
+<tr>
 <td style="text-align:left;">
-H
+HALLMARK_ADIPOGENESIS
 </td>
-<td style="text-align:center;">
-4
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+0.0439996
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_MTORC1_SIGNALING
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+0.0439996
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_FATTY_ACID_METABOLISM
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+0.0439996
 </td>
 </tr>
 <tr>
@@ -1772,76 +1829,143 @@ H
 2
 </td>
 <td style="text-align:left;">
-H
+HALLMARK_MITOTIC_SPINDLE
 </td>
-<td style="text-align:center;">
-5
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:right;">
+0.0000000
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td style="text-align:left;vertical-align: top !important;" rowspan="5">
 3
 </td>
 <td style="text-align:left;">
-H
+HALLMARK_OXIDATIVE_PHOSPHORYLATION
 </td>
-<td style="text-align:center;">
-2
+<td style="text-align:right;">
+37
+</td>
+<td style="text-align:right;">
+0.0000000
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
+HALLMARK_MYC_TARGETS_V1
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:right;">
+0.0000143
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_DNA_REPAIR
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+0.0047204
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_INTERFERON_ALPHA_RESPONSE
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+0.0411901
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_UNFOLDED_PROTEIN_RESPONSE
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+0.1875940
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="3">
 4
 </td>
 <td style="text-align:left;">
-H
+HALLMARK_PROTEIN_SECRETION
 </td>
-<td style="text-align:center;">
-0
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:left;">
-H
-</td>
-<td style="text-align:center;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-6
-</td>
-<td style="text-align:left;">
-H
-</td>
-<td style="text-align:center;">
-3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
+<td style="text-align:right;">
 7
 </td>
-<td style="text-align:left;">
-H
-</td>
-<td style="text-align:center;">
-0
+<td style="text-align:right;">
+0.0464935
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-8
+HALLMARK_PI3K_AKT_MTOR_SIGNALING
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+0.0464935
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_UNFOLDED_PROTEIN_RESPONSE
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+0.0470334
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="3">
+5
 </td>
 <td style="text-align:left;">
-H
+HALLMARK_KRAS_SIGNALING_UP
 </td>
-<td style="text-align:center;">
-1
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+0.0000879
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_INFLAMMATORY_RESPONSE
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+0.1577737
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+0.1577737
 </td>
 </tr>
 <tr>
@@ -1849,21 +1973,13 @@ H
 9
 </td>
 <td style="text-align:left;">
-H
+HALLMARK_INTERFERON_GAMMA_RESPONSE
 </td>
-<td style="text-align:center;">
-0
+<td style="text-align:right;">
+8
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-10
-</td>
-<td style="text-align:left;">
-H
-</td>
-<td style="text-align:center;">
-1
+<td style="text-align:right;">
+0.0042739
 </td>
 </tr>
 <tr>
@@ -1871,21 +1987,13 @@ H
 11
 </td>
 <td style="text-align:left;">
-H
+HALLMARK_ALLOGRAFT_REJECTION
 </td>
-<td style="text-align:center;">
-0
+<td style="text-align:right;">
+7
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-12
-</td>
-<td style="text-align:left;">
-H
-</td>
-<td style="text-align:center;">
-0
+<td style="text-align:right;">
+0.0802182
 </td>
 </tr>
 <tr>
@@ -1893,65 +2001,201 @@ H
 13
 </td>
 <td style="text-align:left;">
-H
+HALLMARK_APOPTOSIS
 </td>
-<td style="text-align:center;">
-0
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0.1593613
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
+<td style="text-align:left;vertical-align: top !important;" rowspan="7">
 14
 </td>
 <td style="text-align:left;">
-H
+HALLMARK_COMPLEMENT
 </td>
-<td style="text-align:center;">
-1
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0.0744725
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
+HALLMARK_TNFA_SIGNALING_VIA_NFKB
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0.0744725
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0.1190851
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_ADIPOGENESIS
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0.1521123
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0.1521123
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_MTORC1_SIGNALING
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0.1521123
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_IL6_JAK_STAT3_SIGNALING
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0.1521123
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
 15
 </td>
 <td style="text-align:left;">
-H
+HALLMARK_ESTROGEN_RESPONSE_LATE
 </td>
-<td style="text-align:center;">
-1
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0.0135542
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
+HALLMARK_ESTROGEN_RESPONSE_EARLY
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0.0541025
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
 16
 </td>
 <td style="text-align:left;">
-H
+HALLMARK_DNA_REPAIR
 </td>
-<td style="text-align:center;">
-2
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0.0548914
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
+HALLMARK_INTERFERON_ALPHA_RESPONSE
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0.0768660
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="5">
 17
 </td>
 <td style="text-align:left;">
-H
+HALLMARK_TNFA_SIGNALING_VIA_NFKB
 </td>
-<td style="text-align:center;">
-0
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+0.0000220
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-18
+HALLMARK_INTERFERON_GAMMA_RESPONSE
 </td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+0.0016156
+</td>
+</tr>
+<tr>
 <td style="text-align:left;">
-H
+HALLMARK_INFLAMMATORY_RESPONSE
 </td>
-<td style="text-align:center;">
-0
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+0.0066402
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_IL2_STAT5_SIGNALING
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0.0339295
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_COMPLEMENT
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0.1371110
 </td>
 </tr>
 </tbody>
@@ -2022,14 +2266,14 @@ missing &lt;- mod_0 %&gt;%
   arrange(geneName, adj.P.Val)
 
 #Sort my hand
-mod_0_UI_up &lt;- c(mod_0_UI_up2, &quot;ENSMUSG00000036292&quot;)
+mod_0_UI_up &lt;- c(mod_0_UI_up2)
 mod_0_UI_down &lt;- c(mod_0_UI_down2)
-mod_0_I_up &lt;- c(mod_0_I_up2, &quot;ENSMUSG00000024935&quot;)
-mod_0_I_down &lt;- c(mod_0_I_down2, &quot;ENSMUSG00000030431&quot;)</code></pre>
-<p>These leaves 16 module 0 genes which were not grouped into a module FC group because they showed similarly significant but different directions in uninfected and infected groups.</p>
+mod_0_I_up &lt;- c(mod_0_I_up2, &quot;ENSMUSG00000024935&quot;,&quot;ENSMUSG00000027534&quot;)
+mod_0_I_down &lt;- c(mod_0_I_down2)</code></pre>
+<p>These leaves 8 module 0 genes which were not grouped into a module FC group because they showed similarly significant but different directions in uninfected and infected groups.</p>
 <pre class="r"><code>missing %&gt;% 
-  filter(geneName %notin% c(&quot;ENSMUSG00000036292&quot;,&quot;ENSMUSG00000024935&quot;,
-                            &quot;ENSMUSG00000030431&quot;)) %&gt;% 
+  filter(geneName %notin% c(&quot;ENSMUSG00000024935&quot;,
+                            &quot;ENSMUSG00000027534&quot;)) %&gt;% 
   dplyr::select(geneName, mgi_symbol, adj.P.Val, group, FC.group) %&gt;% 
   
  kable() %&gt;% 
@@ -2064,7 +2308,7 @@ ENSMUSG00000007646
 Rad51c
 </td>
 <td style="text-align:right;">
-0.1476619
+0.2078087
 </td>
 <td style="text-align:left;">
 infected
@@ -2075,7 +2319,7 @@ up
 </tr>
 <tr>
 <td style="text-align:right;">
-0.1849470
+0.2752807
 </td>
 <td style="text-align:left;">
 uninfected
@@ -2086,58 +2330,30 @@ down
 </tr>
 <tr>
 <td style="text-align:left;vertical-align: top !important;" rowspan="2">
-ENSMUSG00000010651
+ENSMUSG00000020268
 </td>
 <td style="text-align:left;vertical-align: top !important;" rowspan="2">
-Acaa1b
+Lyrm7
 </td>
 <td style="text-align:right;">
-0.1868235
+0.1131500
 </td>
 <td style="text-align:left;">
 infected
-</td>
-<td style="text-align:left;">
-down
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.2372878
-</td>
-<td style="text-align:left;">
-uninfected
 </td>
 <td style="text-align:left;">
 up
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-ENSMUSG00000026275
-</td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-Ppp1r7
-</td>
 <td style="text-align:right;">
-0.2664345
-</td>
-<td style="text-align:left;">
-infected
-</td>
-<td style="text-align:left;">
-down
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.2984577
+0.1459106
 </td>
 <td style="text-align:left;">
 uninfected
 </td>
 <td style="text-align:left;">
-up
+down
 </td>
 </tr>
 <tr>
@@ -2148,7 +2364,7 @@ ENSMUSG00000027570
 Col9a3
 </td>
 <td style="text-align:right;">
-0.1562868
+0.2141066
 </td>
 <td style="text-align:left;">
 uninfected
@@ -2159,94 +2375,10 @@ down
 </tr>
 <tr>
 <td style="text-align:right;">
-0.2524983
+0.2998444
 </td>
 <td style="text-align:left;">
 infected
-</td>
-<td style="text-align:left;">
-up
-</td>
-</tr>
-<tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-ENSMUSG00000034898
-</td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-Filip1
-</td>
-<td style="text-align:right;">
-0.1434451
-</td>
-<td style="text-align:left;">
-infected
-</td>
-<td style="text-align:left;">
-down
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.1522366
-</td>
-<td style="text-align:left;">
-uninfected
-</td>
-<td style="text-align:left;">
-up
-</td>
-</tr>
-<tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-ENSMUSG00000035165
-</td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-Kcne3
-</td>
-<td style="text-align:right;">
-0.2640174
-</td>
-<td style="text-align:left;">
-uninfected
-</td>
-<td style="text-align:left;">
-up
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.2976839
-</td>
-<td style="text-align:left;">
-infected
-</td>
-<td style="text-align:left;">
-down
-</td>
-</tr>
-<tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-ENSMUSG00000037818
-</td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-Abhd18
-</td>
-<td style="text-align:right;">
-0.1434129
-</td>
-<td style="text-align:left;">
-infected
-</td>
-<td style="text-align:left;">
-down
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.2145669
-</td>
-<td style="text-align:left;">
-uninfected
 </td>
 <td style="text-align:left;">
 up
@@ -2260,7 +2392,7 @@ ENSMUSG00000044005
 Gls2
 </td>
 <td style="text-align:right;">
-0.1312718
+0.1811460
 </td>
 <td style="text-align:left;">
 infected
@@ -2271,41 +2403,13 @@ down
 </tr>
 <tr>
 <td style="text-align:right;">
-0.1421707
+0.2133073
 </td>
 <td style="text-align:left;">
 uninfected
 </td>
 <td style="text-align:left;">
 up
-</td>
-</tr>
-<tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-ENSMUSG00000050965
-</td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-Prkca
-</td>
-<td style="text-align:right;">
-0.2049788
-</td>
-<td style="text-align:left;">
-uninfected
-</td>
-<td style="text-align:left;">
-up
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.2640502
-</td>
-<td style="text-align:left;">
-infected
-</td>
-<td style="text-align:left;">
-down
 </td>
 </tr>
 <tr>
@@ -2316,7 +2420,7 @@ ENSMUSG00000054716
 Zfp771
 </td>
 <td style="text-align:right;">
-0.1959354
+0.2283433
 </td>
 <td style="text-align:left;">
 infected
@@ -2327,97 +2431,13 @@ up
 </tr>
 <tr>
 <td style="text-align:right;">
-0.2243708
+0.2772522
 </td>
 <td style="text-align:left;">
 uninfected
 </td>
 <td style="text-align:left;">
 down
-</td>
-</tr>
-<tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-ENSMUSG00000071291
-</td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-Zfp58
-</td>
-<td style="text-align:right;">
-0.2008224
-</td>
-<td style="text-align:left;">
-infected
-</td>
-<td style="text-align:left;">
-up
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.2604671
-</td>
-<td style="text-align:left;">
-uninfected
-</td>
-<td style="text-align:left;">
-down
-</td>
-</tr>
-<tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-ENSMUSG00000072919
-</td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-Noxred1
-</td>
-<td style="text-align:right;">
-0.2031878
-</td>
-<td style="text-align:left;">
-infected
-</td>
-<td style="text-align:left;">
-up
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.2600235
-</td>
-<td style="text-align:left;">
-uninfected
-</td>
-<td style="text-align:left;">
-down
-</td>
-</tr>
-<tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-ENSMUSG00000073650
-</td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-Catip
-</td>
-<td style="text-align:right;">
-0.1803427
-</td>
-<td style="text-align:left;">
-uninfected
-</td>
-<td style="text-align:left;">
-down
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.2617117
-</td>
-<td style="text-align:left;">
-infected
-</td>
-<td style="text-align:left;">
-up
 </td>
 </tr>
 <tr>
@@ -2428,7 +2448,7 @@ ENSMUSG00000090121
 Abhd12b
 </td>
 <td style="text-align:right;">
-0.1219917
+0.1656325
 </td>
 <td style="text-align:left;">
 infected
@@ -2439,7 +2459,7 @@ up
 </tr>
 <tr>
 <td style="text-align:right;">
-0.1935305
+0.2645692
 </td>
 <td style="text-align:left;">
 uninfected
@@ -2456,7 +2476,7 @@ ENSMUSG00000092260
 Zfp963
 </td>
 <td style="text-align:right;">
-0.1387331
+0.1865873
 </td>
 <td style="text-align:left;">
 infected
@@ -2467,7 +2487,7 @@ up
 </tr>
 <tr>
 <td style="text-align:right;">
-0.1978112
+0.2736297
 </td>
 <td style="text-align:left;">
 uninfected
@@ -2484,7 +2504,7 @@ ENSMUSG00000100937
 1700020D05Rik
 </td>
 <td style="text-align:right;">
-0.1095091
+0.1450344
 </td>
 <td style="text-align:left;">
 infected
@@ -2495,7 +2515,7 @@ up
 </tr>
 <tr>
 <td style="text-align:right;">
-0.1752322
+0.2386485
 </td>
 <td style="text-align:left;">
 uninfected
@@ -2512,12 +2532,12 @@ down
 <pre class="r"><code>file.remove(&quot;results/GSEA/GSEA_module_groups_H.csv&quot;, showWarnings=FALSE)
 #Add groups to modules
 mods.net.groups &lt;- mods.net %&gt;% 
-  mutate(mod.group = ifelse(module %in% c(12,16,7,2,14), &quot;both_up&quot;,
-                      ifelse(module %in% c(10,6,17,3,13), &quot;both_down&quot;,
-                       ifelse(module %in% c(15), &quot;UI_up&quot;,
-                        ifelse(module %in% c(11,18), &quot;UI_down&quot;,
-                          ifelse(module %in% c(1,8), &quot;I_up&quot;,
-                            ifelse(module %in% c(4,9,5), &quot;I_down&quot;,
+  mutate(mod.group = ifelse(module %in% c(14,7,16,9), &quot;both_up&quot;,
+                      ifelse(module %in% c(5,11,17,10,2), &quot;both_down&quot;,
+                       ifelse(module %in% c(13,15), &quot;UI_up&quot;,
+                        ifelse(module %in% c(6,12), &quot;UI_down&quot;,
+                          ifelse(module %in% c(1,3), &quot;I_up&quot;,
+                            ifelse(module %in% c(4,8), &quot;I_down&quot;,
                                    NA))))))) %&gt;% 
   filter(module != 0)
 
@@ -2585,7 +2605,7 @@ file.remove(files, showWarnings=FALSE)</code></pre>
 </div>
 <div id="gsea-module-group-summary" class="section level3">
 <h3>GSEA module group summary</h3>
-<p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.05.</p>
+<p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.2.</p>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2617,128 +2637,14 @@ FDR
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="13">
+<td style="text-align:left;vertical-align: top !important;" rowspan="16">
 H
 </td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+<td style="text-align:left;vertical-align: top !important;" rowspan="5">
 both_down
 </td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="2">
-1202
-</td>
-<td style="text-align:left;">
-HALLMARK_INFLAMMATORY_RESPONSE
-</td>
-<td style="text-align:right;">
-35
-</td>
-<td style="text-align:right;">
-199
-</td>
-<td style="text-align:right;">
-0.1758794
-</td>
-<td style="text-align:right;">
-0.0004208
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-HALLMARK_MITOTIC_SPINDLE
-</td>
-<td style="text-align:right;">
-31
-</td>
-<td style="text-align:right;">
-199
-</td>
-<td style="text-align:right;">
-0.1557789
-</td>
-<td style="text-align:right;">
-0.0074126
-</td>
-</tr>
-<tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="4">
-both_up
-</td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="4">
-1193
-</td>
-<td style="text-align:left;">
-HALLMARK_CHOLESTEROL_HOMEOSTASIS
-</td>
-<td style="text-align:right;">
-17
-</td>
-<td style="text-align:right;">
-74
-</td>
-<td style="text-align:right;">
-0.2297297
-</td>
-<td style="text-align:right;">
-0.0019567
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-HALLMARK_ADIPOGENESIS
-</td>
-<td style="text-align:right;">
-33
-</td>
-<td style="text-align:right;">
-200
-</td>
-<td style="text-align:right;">
-0.1650000
-</td>
-<td style="text-align:right;">
-0.0019567
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-HALLMARK_FATTY_ACID_METABOLISM
-</td>
-<td style="text-align:right;">
-24
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:right;">
-0.1500000
-</td>
-<td style="text-align:right;">
-0.0451859
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-HALLMARK_TNFA_SIGNALING_VIA_NFKB
-</td>
-<td style="text-align:right;">
-28
-</td>
-<td style="text-align:right;">
-200
-</td>
-<td style="text-align:right;">
-0.1400000
-</td>
-<td style="text-align:right;">
-0.0451859
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-infected_down
-</td>
-<td style="text-align:left;">
-1042
+<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+1071
 </td>
 <td style="text-align:left;">
 HALLMARK_MITOTIC_SPINDLE
@@ -2753,27 +2659,169 @@ HALLMARK_MITOTIC_SPINDLE
 0.1909548
 </td>
 <td style="text-align:right;">
-0.0000001
+0.0000160
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+<td style="text-align:left;">
+HALLMARK_INFLAMMATORY_RESPONSE
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+199
+</td>
+<td style="text-align:right;">
+0.1407035
+</td>
+<td style="text-align:right;">
+0.0490483
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_HYPOXIA
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+201
+</td>
+<td style="text-align:right;">
+0.1393035
+</td>
+<td style="text-align:right;">
+0.0490483
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_KRAS_SIGNALING_UP
+</td>
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:right;">
+204
+</td>
+<td style="text-align:right;">
+0.1323529
+</td>
+<td style="text-align:right;">
+0.0881643
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_ALLOGRAFT_REJECTION
+</td>
+<td style="text-align:right;">
+26
+</td>
+<td style="text-align:right;">
+204
+</td>
+<td style="text-align:right;">
+0.1274510
+</td>
+<td style="text-align:right;">
+0.1306612
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="4">
+both_up
+</td>
+<td style="text-align:left;vertical-align: top !important;" rowspan="4">
+517
+</td>
+<td style="text-align:left;">
+HALLMARK_TNFA_SIGNALING_VIA_NFKB
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
+0.0700000
+</td>
+<td style="text-align:right;">
+0.0533466
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_XENOBIOTIC_METABOLISM
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+202
+</td>
+<td style="text-align:right;">
+0.0693069
+</td>
+<td style="text-align:right;">
+0.0533466
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_INTERFERON_GAMMA_RESPONSE
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+208
+</td>
+<td style="text-align:right;">
+0.0673077
+</td>
+<td style="text-align:right;">
+0.0533466
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_TGF_BETA_SIGNALING
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+54
+</td>
+<td style="text-align:right;">
+0.1111111
+</td>
+<td style="text-align:right;">
+0.0611588
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="7">
 infected_up
 </td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="5">
-969
+<td style="text-align:left;vertical-align: top !important;" rowspan="7">
+1199
 </td>
 <td style="text-align:left;">
 HALLMARK_OXIDATIVE_PHOSPHORYLATION
 </td>
 <td style="text-align:right;">
-57
+71
 </td>
 <td style="text-align:right;">
 198
 </td>
 <td style="text-align:right;">
-0.2878788
+0.3585859
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -2784,13 +2832,13 @@ HALLMARK_OXIDATIVE_PHOSPHORYLATION
 HALLMARK_MYC_TARGETS_V1
 </td>
 <td style="text-align:right;">
-41
+48
 </td>
 <td style="text-align:right;">
 200
 </td>
 <td style="text-align:right;">
-0.2050000
+0.2400000
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -2798,19 +2846,19 @@ HALLMARK_MYC_TARGETS_V1
 </tr>
 <tr>
 <td style="text-align:left;">
-HALLMARK_INTERFERON_GAMMA_RESPONSE
+HALLMARK_ADIPOGENESIS
 </td>
 <td style="text-align:right;">
-27
+32
 </td>
 <td style="text-align:right;">
-208
+200
 </td>
 <td style="text-align:right;">
-0.1298077
+0.1600000
 </td>
 <td style="text-align:right;">
-0.0113599
+0.0081864
 </td>
 </tr>
 <tr>
@@ -2818,16 +2866,16 @@ HALLMARK_INTERFERON_GAMMA_RESPONSE
 HALLMARK_INTERFERON_ALPHA_RESPONSE
 </td>
 <td style="text-align:right;">
-16
+19
 </td>
 <td style="text-align:right;">
 102
 </td>
 <td style="text-align:right;">
-0.1568627
+0.1862745
 </td>
 <td style="text-align:right;">
-0.0118043
+0.0112073
 </td>
 </tr>
 <tr>
@@ -2835,44 +2883,54 @@ HALLMARK_INTERFERON_ALPHA_RESPONSE
 HALLMARK_DNA_REPAIR
 </td>
 <td style="text-align:right;">
-21
+25
 </td>
 <td style="text-align:right;">
 150
 </td>
 <td style="text-align:right;">
-0.1400000
+0.1666667
 </td>
 <td style="text-align:right;">
-0.0118043
+0.0112073
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-uninfected_up
+HALLMARK_INTERFERON_GAMMA_RESPONSE
 </td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+208
+</td>
+<td style="text-align:right;">
+0.1346154
+</td>
+<td style="text-align:right;">
+0.1092880
+</td>
+</tr>
+<tr>
 <td style="text-align:left;">
-218
-</td>
-<td style="text-align:left;">
-HALLMARK_ESTROGEN_RESPONSE_LATE
+HALLMARK_MTORC1_SIGNALING
 </td>
 <td style="text-align:right;">
-9
+26
 </td>
 <td style="text-align:right;">
-206
+200
 </td>
 <td style="text-align:right;">
-0.0436893
+0.1300000
 </td>
 <td style="text-align:right;">
-0.0373333
+0.1764292
 </td>
 </tr>
 </tbody>
 </table>
-<p>Note that the group <code>uninfected_down</code> did not have any significant terms. The lowest FDR was 0.4348007</p>
 </div>
 </div>
 </div>
