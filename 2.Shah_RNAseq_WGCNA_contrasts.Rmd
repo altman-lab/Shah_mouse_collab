@@ -150,7 +150,7 @@ PCA3 <- ggplot(PCA.all.dat,
 
 PCA4 <- ggplot(PCA.all.dat,
                   aes(PC1, PC2)) +
-           geom_point(aes(color=as.character(mouse)),
+           geom_point(aes(color=as.character(batch)),
                       size=3) + 
   #Beautify
   theme_classic() +
@@ -182,20 +182,10 @@ contrasts <- makeContrasts(
   infected = Infected_TKO-Infected_WT,
   levels=model)
   
-#Calculate consensus corr of samples from the same donor
-consensus.corr <- duplicateCorrelation(
-                    dat.voom$E,
-                    model,
-  block=dat.voom$targets$mouse)$consensus.correlation
-  
-  consensus.corr
-  
-# Fit model to transformed count data. Calculate eBayes
+#Fit model to transformed count data. Calculate eBayes
   efitQW <- eBayes(
             contrasts.fit(contrasts=contrasts,
-            lmFit(dat.voom$E, model,
-                  block=dat.voom$targets$mouse,
-                  correlation=consensus.corr)))
+            lmFit(dat.voom$E, model)))
 ```
 
 ```{r warning=FALSE, message=FALSE, echo=FALSE}
@@ -348,7 +338,7 @@ plot.all(voom.dat=dat.voom,
          vars=c("status","cell"),
          interaction=TRUE,
          interaction.terms=c("uninfected","infected"),
-         color.var="mouse",
+         color.var="batch",
          outdir="figs/gene_level_contrast/", 
          name=paste(basename,"expression_", sep="_"),
          cores=3, width=5, height=7)
@@ -475,7 +465,7 @@ PCA3 <- ggplot(PCA.all.dat,
 
 PCA4 <- ggplot(PCA.all.dat,
                   aes(PC1, PC2)) +
-           geom_point(aes(color=as.character(mouse)),
+           geom_point(aes(color=as.character(batch)),
                       size=3) + 
   #Beautify
   theme_classic() +
@@ -496,20 +486,10 @@ ggsave("figs/PCA_Shah_contrast_moduleVoom.png",
 ## Linear model
 
 ```{r}
-#Calculate consensus corr of samples from the same donor   
-consensus.corr <- duplicateCorrelation(
-                    voom.mods,
-                    model,
-  block=dat.voom$targets$mouse)$consensus.correlation
-  
-  consensus.corr
-  
 # Fit model to transformed count data. Calculate eBayes
   efitQW.mods <- eBayes(
             contrasts.fit(contrasts=contrasts,
-            lmFit(voom.mods, model,
-                  block=dat.voom$targets$mouse,
-                  correlation=consensus.corr)))
+            lmFit(voom.mods, model)))
 ```
 
 ```{r warning=FALSE, message=FALSE, echo=FALSE}
@@ -547,6 +527,7 @@ get(paste(mod.result.name, "summ", sep=".")) %>%
 
 ```{r echo=FALSE}
 get(mod.result.name) %>% 
+  filter(geneName != "module_Shah_contrast_00") %>% 
   mutate(signif.05 = ifelse(adj.P.Val <= 0.05, 
                             as.character(FC.group), 
                             NA)) %>% 
@@ -563,9 +544,9 @@ get(mod.result.name) %>%
                       "infected \ndirection in TKO")) %>% 
   kable_styling(bootstrap_options = "striped", 
                 full_width = FALSE) %>% 
-  pack_rows("Significant in uninfected", 1,3) %>% 
-  pack_rows("Significant in infected", 4,9) %>% 
-  pack_rows("Significant in both", 10,19)
+  pack_rows("Significant in uninfected", 1,4) %>% 
+  pack_rows("Significant in infected", 5,8) %>% 
+  pack_rows("Significant in both", 9,17)
 ```
 
 _Directions are relative to WT. For example, `down` means the module has **lower** expression in TKO relative to WT._
@@ -592,7 +573,7 @@ plot.all(voom.dat=voom.mods,
          vars=c("status","cell"),
          interaction=TRUE,
          interaction.terms=c("uninfected","infected"),
-         color.var="mouse",
+         color.var="batch",
          outdir=paste(mod.figs.dir[1],"/",sep=""), 
          name=paste(basename,"expression_mod_", sep="_"),
          cores=3, width=5, height=7)

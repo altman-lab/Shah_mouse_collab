@@ -153,7 +153,7 @@ PCA3 <- ggplot(PCA.all.dat,
 
 PCA4 <- ggplot(PCA.all.dat,
                   aes(PC1, PC2)) +
-           geom_point(aes(color=as.character(mouse)),
+           geom_point(aes(color=as.character(batch)),
                       size=3) + 
   #Beautify
   theme_classic() +
@@ -179,19 +179,9 @@ ggsave("figs/PCA_Shah_geneVoom.png",
 model <- model.matrix(model_gene, data=dat.voom$targets)
   colnames(model) <- c("(Intercept)", model_gene_names)
 
-#Calculate consensus corr of samples from the same donor
-consensus.corr <- duplicateCorrelation(
-                    dat.voom$E,
-                    model,
-  block=dat.voom$targets$mouse)$consensus.correlation
-  
-  consensus.corr
-  
 # Fit model to transformed count data. Calculate eBayes
   efitQW <- eBayes(
-            lmFit(dat.voom$E, model,
-                  block=dat.voom$targets$mouse,
-                  correlation=consensus.corr))
+            lmFit(dat.voom$E, model))
 ```
 
 ```{r warning=FALSE, message=FALSE, echo=FALSE}
@@ -286,11 +276,11 @@ genes.toPlot <- get(gene.result.name) %>%
 dir.create("figs/gene_level/", showWarnings = FALSE)
 plot.all(voom.dat=dat.voom, 
          pval.dat=get(gene.result.name), 
-         genes.toPlot=genes.toPlot,
+         genes.toPlot=unique(Shah_gene_pval$geneName),
          gene.key="data_clean/ensembl.key.txt",
          vars=model_gene_names[1:2],
          interaction=TRUE,
-         color.var="mouse",
+         color.var="batch",
          outdir="figs/gene_level/", 
          name=paste(basename,"expression_", sep="_"),
          cores=3, width=5, height=7)
@@ -424,7 +414,7 @@ PCA3 <- ggplot(PCA.all.dat,
 
 PCA4 <- ggplot(PCA.all.dat,
                   aes(PC1, PC2)) +
-           geom_point(aes(color=as.character(mouse)),
+           geom_point(aes(color=as.character(batch)),
                       size=3) + 
   #Beautify
   theme_classic() +
@@ -449,19 +439,9 @@ ggsave("figs/PCA_Shah_moduleVoom.png",
 model_2 <- model.matrix(model_mod, data=dat.voom$targets)
     colnames(model_2) <- c("(Intercept)",model_mod_names)
 
-#Calculate consensus corr of samples from the same donor   
-consensus.corr <- duplicateCorrelation(
-                    voom.mods,
-                    model_2,
-  block=dat.voom$targets$mouse)$consensus.correlation
-  
-  consensus.corr
-  
 # Fit model to transformed count data. Calculate eBayes
   efitQW.mods <- eBayes(
-            lmFit(voom.mods, model_2,
-                  block=dat.voom$targets$mouse,
-                  correlation=consensus.corr))
+            lmFit(voom.mods, model_2))
 ```
 
 ```{r warning=FALSE, message=FALSE, echo=FALSE}
@@ -511,11 +491,11 @@ do.call(file.remove, list(list.files(mod.figs.dir,
 plot.all(voom.dat=voom.mods, 
          pval.dat=get(mod.result.name), 
          meta.dat = as.data.frame(dat.voom$targets),
-         genes.toPlot=unique(rownames(voom.mods)),
+         genes.toPlot=unique(rownames(voom.mods))[-1],
          #######
          vars=model_mod_names[1:2],
          interaction=TRUE,
-         color.var="mouse",
+         color.var="batch",
          outdir=paste(mod.figs.dir,"/",sep=""), 
          name=paste(basename,"expression_mod_", sep="_"),
          cores=3, width=5, height=7)
