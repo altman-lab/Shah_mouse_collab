@@ -1,4 +1,4 @@
-sampID,mouse,cell,status
+sampID,batch,cell,status
 Lu01,1,WT,Uninfected
 Lu02,1,WT,Infected
 Lu03,2,WT,Uninfected

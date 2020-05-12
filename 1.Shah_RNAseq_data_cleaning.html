@@ -1527,7 +1527,7 @@ div.tocify {
 <h1 class="title toc-ignore">Summary of RNA-seq data cleaning</h1>
 <h3 class="subtitle">J. Shah chimeric mouse collaboration</h3>
 <h4 class="author">Kim Dill-McFarland, <a href="mailto:kadm@uw.edu" class="email">kadm@uw.edu</a></h4>
-<h4 class="date">version May 11, 2020</h4>
+<h4 class="date">version May 12, 2020</h4>
 
 </div>
 
@@ -1764,19 +1764,7 @@ library(kableExtra)
 <p>Set seed</p>
 <pre class="r"><code>set.seed(4389)</code></pre>
 <p>Set variable names and cutoffs for this workflow.</p>
-<pre class="r"><code>#Directory WITHIN project directory that holds raw count, metadata, and gene key
-data.dir &lt;- &quot;data_raw&quot;
-
-#Provide file basename
-#This will be appended to the start of all file names saved to the disk
-basename &lt;- &quot;P337.1&quot;
-
-#List main variables of interest
-#Will be used to visualize data in tables and plots
-#If &gt; 2 variables provided, plots are not colored by variables
-vars_of_interest &lt;- c(&quot;group&quot;,&quot;visit&quot;)
-
-# Define cutoffs
+<pre class="r"><code># Define cutoffs
 #Median CV coverage MAXIMUM
 CV.cut &lt;- 0.65
 #Alignment percentage with duplicates MINIMUM
@@ -1815,7 +1803,7 @@ count.cut &lt;- 1E6</code></pre>
 <pre class="r"><code>meta &lt;- read_csv(&quot;data_clean/Shah.metadata.csv&quot;) %&gt;% 
   full_join(read_csv(&quot;data_clean/Shah.data.cleaning.metrics.csv&quot;),
             by=&quot;sampID&quot;) %&gt;% 
-  mutate(mouse = as.character(mouse),
+  mutate(batch = as.character(batch),
          cell = factor(cell, levels=c(&quot;WT&quot;,&quot;TKO&quot;)),
          status = factor(status, levels=c(&quot;Uninfected&quot;,
                                           &quot;Infected&quot;))) %&gt;% 
@@ -1823,7 +1811,7 @@ count.cut &lt;- 1E6</code></pre>
 <pre><code>## Parsed with column specification:
 ## cols(
 ##   sampID = col_character(),
-##   mouse = col_double(),
+##   batch = col_double(),
 ##   cell = col_character(),
 ##   status = col_character()
 ## )</code></pre>

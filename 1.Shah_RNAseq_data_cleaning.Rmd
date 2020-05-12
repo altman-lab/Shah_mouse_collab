@@ -302,18 +302,6 @@ set.seed(4389)
 Set variable names and cutoffs for this workflow.
 
 ```{r custom}
-#Directory WITHIN project directory that holds raw count, metadata, and gene key
-data.dir <- "data_raw"
-
-#Provide file basename
-#This will be appended to the start of all file names saved to the disk
-basename <- "P337.1"
-
-#List main variables of interest
-#Will be used to visualize data in tables and plots
-#If > 2 variables provided, plots are not colored by variables
-vars_of_interest <- c("group","visit")
-
 # Define cutoffs
 #Median CV coverage MAXIMUM
 CV.cut <- 0.65
@@ -336,7 +324,7 @@ counts <- read_csv("data_clean/Shah.counts.clean.csv")
 meta <- read_csv("data_clean/Shah.metadata.csv") %>% 
   full_join(read_csv("data_clean/Shah.data.cleaning.metrics.csv"),
             by="sampID") %>% 
-  mutate(mouse = as.character(mouse),
+  mutate(batch = as.character(batch),
          cell = factor(cell, levels=c("WT","TKO")),
          status = factor(status, levels=c("Uninfected",
                                           "Infected"))) %>% 
@@ -363,7 +351,6 @@ kable(align="l",
       caption="Total libraries") %>% 
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
 ```
-
 
 ## 7. Filter protein coding genes
 
@@ -520,7 +507,7 @@ PCA2 <- ggplot(PCA.all.dat,
 
 PCA3 <- ggplot(PCA.all.dat,
                   aes(PC1, PC2)) +
-           geom_point(aes(color=mouse),
+           geom_point(aes(color=batch),
                       size=3) + 
   #Beautify
   theme_classic() +
@@ -663,7 +650,6 @@ genes.abund <- nrow(dat.pc.abund$genes)
 
 This removes `r genes-genes.abund` (~ `r round((genes-genes.abund)/genes*100, digits=0)`%) genes. 
 
-
 ## 11. Normalize counts
 ### Normalize for RNA composition
 
@@ -727,7 +713,7 @@ PCA2 <- ggplot(PCA.voom.dat,
 
 PCA3 <- ggplot(PCA.voom.dat,
                   aes(PC1, PC2)) +
-           geom_point(aes(color=mouse),
+           geom_point(aes(color=batch),
                       size=3) + 
   #Beautify
   theme_classic() +
