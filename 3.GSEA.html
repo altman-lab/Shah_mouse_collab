@@ -2257,7 +2257,13 @@ missing &lt;- mod_0 %&gt;%
 mod_0_UI_up &lt;- c(mod_0_UI_up2)
 mod_0_UI_down &lt;- c(mod_0_UI_down2)
 mod_0_I_up &lt;- c(mod_0_I_up2, &quot;ENSMUSG00000024935&quot;,&quot;ENSMUSG00000027534&quot;)
-mod_0_I_down &lt;- c(mod_0_I_down2)</code></pre>
+mod_0_I_down &lt;- c(mod_0_I_down2)
+
+
+#Save lists
+save(mod_0_UI_up, mod_0_UI_down, mod_0_I_up, mod_0_I_down,
+     mod_0_both_up, mod_0_both_down,
+      file=&quot;data_clean/module_0_sorted.RData&quot;)</code></pre>
 <p>These leaves 8 module 0 genes which were not grouped into a module FC group because they showed similarly significant but different directions in uninfected and infected groups.</p>
 <pre class="r"><code>missing %&gt;% 
   filter(geneName %notin% c(&quot;ENSMUSG00000024935&quot;,

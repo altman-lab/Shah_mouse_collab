@@ -307,6 +307,11 @@ mod_0_UI_up <- c(mod_0_UI_up2)
 mod_0_UI_down <- c(mod_0_UI_down2)
 mod_0_I_up <- c(mod_0_I_up2, "ENSMUSG00000024935","ENSMUSG00000027534")
 mod_0_I_down <- c(mod_0_I_down2)
+
+#Save lists
+save(mod_0_UI_up, mod_0_UI_down, mod_0_I_up, mod_0_I_down,
+     mod_0_both_up, mod_0_both_down,
+      file="data_clean/module_0_sorted.RData")
 ```
 
 These leaves 8 module 0 genes which were not grouped into a module FC group because they showed similarly significant but different directions in uninfected and infected groups.
