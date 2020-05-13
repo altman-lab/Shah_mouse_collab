@@ -1,16 +1,20 @@
 ---
 title: "Differential expression of genes and modules"
-subtitle: "J. Shah chimeric mouse collaboration"
 author: "Kim Dill-McFarland, kadm@uw.edu"
+date: "version `r format(Sys.time(), '%B %d, %Y')`"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
   html_document:
     toc: yes
     toc_depth: 4
     toc_float:
       collapsed: no
-date: "version `r format(Sys.time(), '%B %d, %Y')`"
-editor_options: 
+editor_options:
   chunk_output_type: console
+subtitle: J. Shah chimeric mouse collaboration
+always_allow_html: yes
 ---
 
 # Background

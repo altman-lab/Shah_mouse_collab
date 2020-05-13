@@ -1,15 +1,18 @@
 ---
 title: "Summary of RNA-seq data cleaning"
-subtitle: "J. Shah chimeric mouse collaboration"
 author: "Kim Dill-McFarland, kadm@uw.edu"
+date: "version `r format(Sys.time(), '%B %d, %Y')`"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
   html_document:
     toc: yes
     toc_depth: 4
     toc_float:
       collapsed: no
-date: "version `r format(Sys.time(), '%B %d, %Y')`"
-editor_options: 
+subtitle: J. Shah chimeric mouse collaboration
+editor_options:
   chunk_output_type: console
 ---
 
