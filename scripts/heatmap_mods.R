@@ -1,6 +1,8 @@
 library(tidyverse)
 library(ComplexHeatmap)
 library(pvclust)
+#Magma color scheme
+library(viridis)
 dir.create("figs/heatmap", showWarnings = FALSE)
 
 #### DATA ####
@@ -109,8 +111,7 @@ pdf(file = "figs/heatmap/heatmap_modules.pdf", height=10, width=10)
 
 draw(Heatmap(counts.sub, name = "Module log2\nexpression",
         #Expression colors
-        col = circlize::colorRamp2(c(0,3,6), 
-                        c("#f7fcfd", "#9ebcda", "#4d004b")),
+        col = magma(20),
         #Sample annot
         cluster_columns = FALSE,
         column_split = meta,
@@ -162,8 +163,7 @@ pdf(file = "figs/heatmap/heatmap_modules.split0.pdf",
 
 draw(Heatmap(counts.sub, name = "Module log2\nexpression",
              #Expression colors
-             col = circlize::colorRamp2(c(-3,1.5,6), 
-                        c("#f7fcfd", "#9ebcda", "#4d004b")),
+             col = magma(20),
              #Sample annot
              cluster_columns = FALSE,
              column_split = meta,
@@ -215,8 +215,7 @@ pdf(file = "figs/heatmap/heatmap_modules.remove0.pdf",
 
 draw(Heatmap(counts.sub, name = "Module log2\nexpression",
              #Expression colors
-             col = circlize::colorRamp2(c(1,3.5,6), 
-                  c("#f7fcfd", "#9ebcda", "#4d004b")),
+             col = magma(20),
              #Sample annot
              cluster_columns = FALSE,
              column_split = meta,
