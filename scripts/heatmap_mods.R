@@ -5,7 +5,7 @@ library(pvclust)
 library(viridis)
 dir.create("figs/heatmap", showWarnings = FALSE)
 
-#### DATA ####
+#### Data ####
 counts <- read_csv("results/module_Shah_contrast_deepSplit3_minMod50/Shah_contrast_mod_voom_counts.csv") %>% 
   #Simplify module names
   mutate(module = gsub("module_Shah_contrast_","mod_",module)) 
@@ -18,7 +18,7 @@ meta <- read_csv("data_clean/Shah.metadata.csv") %>%
   arrange(status, cell) %>% 
   column_to_rownames("sampID")
 
-#### SPLIT MODULE 0 ####
+#### Split mod 0 ####
 #Split module 0 and calculate mean counts
 load("data_clean/module_0_sorted.RData")
 mod_0 <- list(mget(c(ls(pattern="mod_0_"))))
@@ -34,7 +34,7 @@ mod_0_means <- read_csv("results/gene_level/Shah_gene_voom_counts.csv") %>%
   group_by(module) %>% 
   summarise_if(is.numeric, mean, na.rm = TRUE) 
 
-##### COMBINE ALL COUNT DATA #####
+##### Combine all count data #####
 #Combine counts data
 counts.all <- counts %>% 
   bind_rows(mod_0_means) %>% 
@@ -73,7 +73,7 @@ row_annot_df <- data.frame(
                          "down",
                          "NS"))) 
 
-#### ALL MODULES ####
+#### ALL mods ####
 counts.sub <- counts.all %>% 
   #Remove split module 0
   filter(!grepl("mod_0_", module)) %>% 
@@ -123,7 +123,7 @@ draw(Heatmap(counts.sub, name = "Module log2\nexpression",
         row_dend_width = unit(3, "cm")))
 dev.off()
 
-#### SPLIT MODULE 0 ####
+#### SPLIT mod 0 ####
 counts.sub <- counts.all %>% 
   #Remove module 0
   filter(module != "mod_00") %>% 
@@ -175,7 +175,7 @@ draw(Heatmap(counts.sub, name = "Module log2\nexpression",
              row_dend_width = unit(3, "cm")))
 dev.off()
 
-#### REMOVE MODULE 0 ####
+#### REMOVE mod 0 ####
 counts.sub <- counts.all %>% 
   #Remove module 0 and splits
   filter(!grepl("mod_0_", module) & module != "mod_00") %>% 
@@ -227,4 +227,4 @@ draw(Heatmap(counts.sub, name = "Module log2\nexpression",
              row_dend_width = unit(3, "cm")))
 dev.off()
 
-#####
+##### 
