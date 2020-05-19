@@ -383,3 +383,80 @@ draw(Heatmap(counts.sub, name = "Module log2\nexpression",
              row_dend_width = unit(3, "cm")))
 dev.off()
 
+##### 4 group hallmark #####
+hallmark <- read_csv("results/GSEA/GSEA_module_groups_H.csv") 
+
+FDR.cutoff <- .3
+
+#Calculate percent of genes in term
+hallmark_pct <- hallmark %>% 
+  #Calculate proportion of genes in term
+  select(group, Description, size.overlap.term, 
+         size.group, p.adjust) %>% 
+  mutate(pct = size.overlap.term/size.group*100) %>% 
+  #Format labels
+  mutate(group = paste("mod",group, sep="_"),
+         Description = gsub("HALLMARK_","",Description))
+
+#list terms with at least 1 module FDR < 0.5
+hallmark_summ <- hallmark_pct %>% 
+  group_by(Description) %>% 
+  summarize(pct.max=max(pct), fdr.min = min(p.adjust)) %>% 
+  arrange(-fdr.min)
+
+terms.to.keep <- hallmark_summ %>% 
+  filter(fdr.min<=FDR.cutoff) %>% 
+  select(Description) %>% unlist(use.names = FALSE)
+
+hallmark_sub <- hallmark_pct %>% 
+  filter(Description %in% terms.to.keep) %>% 
+  #Wide format
+  select(group, Description, pct) %>% 
+  pivot_wider(names_from = Description, values_from = pct) %>% 
+  arrange(group) %>% 
+  #Fill NAs
+  mutate_if(is.numeric, ~ifelse(is.na(.),0,.)) %>% 
+  #To matrix
+  column_to_rownames("group") %>% 
+  as.matrix()
+
+#### Tree
+corr.pv <- pvclust(t(hallmark_sub), nboot=1000, 
+           method.hclust="average", method.dist="correlation")
+
+#### Row annot
+row_annot <- data.frame(group=rownames(hallmark_sub)) %>% 
+  mutate(Infected = ifelse(grepl("both_up|_I_up", group), "up",
+                     ifelse(grepl("both_down|_I_down", group), "down",
+                            "NS")),
+         Uninfected = ifelse(grepl("both_up|_UI_up", group), "up",
+                       ifelse(grepl("both_down|_UI_down", group), "down",
+                                   "NS"))) %>% 
+  column_to_rownames("group") %>% 
+  rowAnnotation(df=., col=list("Infected" = c("up"="#ca0020",
+                                              "NS"="white",
+                                              "down"="#0571b0"),
+                               "Uninfected" = c("up"="#ca0020",
+                                                "NS"="white",
+                                                "down"="#0571b0")),
+                show_legend=c(TRUE,FALSE),
+                annotation_legend_param = list(Uninfected = 
+                                                 list(title = "Significant\nfold change")))
+
+#### heatmap 
+pdf(file = paste("figs/heatmap/heatmap_hallmark.4groups_FDR",
+                 FDR.cutoff, ".pdf", sep=""), 
+    height=4, width=7)
+
+draw(Heatmap(hallmark_sub, name = "Percent genes\nin group",
+             #Expression colors
+             col = magma(20),
+             #Sample annot
+             cluster_columns = TRUE,
+             #Module annot
+             right_annotation = row_annot,
+             cluster_rows = corr.pv$hclust,
+             row_split = 3, row_gap = unit(2, "mm"),
+             row_dend_width = unit(2, "cm"),
+             column_names_gp = gpar(fontsize = 8)))
+dev.off()
