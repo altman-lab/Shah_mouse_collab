@@ -285,7 +285,7 @@ row_annot <- row_annot_df %>%
 pdf(file = "figs/heatmap/heatmap_hallmark.remove0.pdf", 
     height=10, width=15)
 
-draw(Heatmap(hallmark_sub, name = "Propotion of\ngenes in module",
+draw(Heatmap(hallmark_sub, name = "Percent genes\nin module",
              #Expression colors
              col = magma(20),
              #Sample annot
