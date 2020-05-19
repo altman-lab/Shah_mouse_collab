@@ -4,6 +4,7 @@ library(pvclust)
 #Magma color scheme
 library(viridis)
 dir.create("figs/heatmap", showWarnings = FALSE)
+set.seed(546)
 
 #### Data ####
 counts <- read_csv("results/module_Shah_contrast_deepSplit3_minMod50/Shah_contrast_mod_voom_counts.csv") %>% 
@@ -231,6 +232,8 @@ dev.off()
 
 hallmark <- read_csv("results/GSEA/GSEA_modules_H.csv") 
 
+FDR.cutoff <- .05
+
 #Calculate percent of genes in term
 hallmark_pct <- hallmark %>% 
   #remove mod 0
@@ -250,7 +253,7 @@ hallmark_summ <- hallmark_pct %>%
   arrange(-fdr.min)
 
 terms.to.keep <- hallmark_summ %>% 
-  filter(fdr.min<=0.3) %>% 
+  filter(fdr.min<=FDR.cutoff) %>% 
   select(Description) %>% unlist(use.names = FALSE)
 
 hallmark_sub <- hallmark_pct %>% 
@@ -265,6 +268,10 @@ hallmark_sub <- hallmark_pct %>%
   column_to_rownames("group") %>% 
   as.matrix()
   
+#### Tree
+#corr.pv <- pvclust(t(hallmark_sub), nboot=1000, 
+#           method.hclust="average", method.dist="correlation")
+
 #### Row (module) annotation
 row_annot <- row_annot_df %>% 
   #Remove module 0 and splits
@@ -282,8 +289,9 @@ row_annot <- row_annot_df %>%
                                                  list(title = "Significant\nfold change")))
 
 #### heatmap 
-pdf(file = "figs/heatmap/heatmap_hallmark.remove0.pdf", 
-    height=10, width=15)
+pdf(file = paste("figs/heatmap/heatmap_hallmark.remove0_FDR",
+                 FDR.cutoff, ".pdf", sep=""), 
+    height=10, width=11)
 
 draw(Heatmap(hallmark_sub, name = "Percent genes\nin module",
              #Expression colors
