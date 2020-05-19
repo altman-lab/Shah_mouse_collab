@@ -1527,7 +1527,7 @@ div.tocify {
 <h1 class="title toc-ignore">Gene set enrichment analysis (GSEA)</h1>
 <h3 class="subtitle">J. Shah chimeric mouse collaboration</h3>
 <h4 class="author">Kim Dill-McFarland, <a href="mailto:kadm@uw.edu" class="email">kadm@uw.edu</a></h4>
-<h4 class="date">version May 13, 2020</h4>
+<h4 class="date">version May 18, 2020</h4>
 
 </div>
 
@@ -1561,7 +1561,7 @@ mods.net &lt;- read_csv(&quot;results/module_Shah_contrast_deepSplit3_minMod50/S
 #Genome
 library(org.Mm.eg.db)
 #Script for running GSEA
-source(&quot;scripts/GSEA_enricher.R&quot;)</code></pre>
+source(&quot;https://raw.githubusercontent.com/kdillmcfarland/R_bioinformatic_scripts/master/GSEA_enricher_loop.R&quot;)</code></pre>
 </div>
 <div id="gene-set-enrichment-analysis-gsea" class="section level1">
 <h1>Gene set enrichment analysis (GSEA)</h1>
@@ -1605,7 +1605,7 @@ source(&quot;scripts/GSEA_enricher.R&quot;)</code></pre>
   filter(adj.P.Val &lt;= 0.05) %&gt;% 
   dplyr::select(geneName) %&gt;% unlist(use.names = FALSE)</code></pre>
 <pre class="r"><code>#Run custom function on genes
-enrich.fxn(gene.list = gene.list,
+enrich.fxn(gene.list = list(contrast_signif_genes=gene.list),
            category = &quot;H&quot;, genome = org.Mm.eg.db,
            basename=&quot;contrast_signif_genes&quot;)
 
@@ -1628,14 +1628,40 @@ enrich.fxn(gene.list = gene.list,
 <div id="gsea-gene-level-summary" class="section level3">
 <h3>GSEA gene-level summary</h3>
 <p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.2.</p>
+<pre><code>## Parsed with column specification:
+## cols(
+##   category = col_character(),
+##   group = col_character(),
+##   size.group = col_double(),
+##   size.overlap.category = col_double(),
+##   size.category = col_double(),
+##   Description = col_character(),
+##   size.overlap.term = col_double(),
+##   size.term = col_double(),
+##   k.K = col_double(),
+##   p.adjust = col_double(),
+##   qvalue = col_double(),
+##   ENTREZIDs = col_character(),
+##   SYMBOLs = col_character(),
+##   ENSEMBLIDs = col_character()
+## )</code></pre>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
 <th style="text-align:left;">
+Group
+</th>
+<th style="text-align:right;">
+Genes in group
+</th>
+<th style="text-align:left;">
 Description
 </th>
 <th style="text-align:right;">
-Overlap genes
+Genes overlap
+</th>
+<th style="text-align:right;">
+Genes in term
 </th>
 <th style="text-align:right;">
 FDR
@@ -1645,10 +1671,19 @@ FDR
 <tbody>
 <tr>
 <td style="text-align:left;">
+contrast_signif_genes
+</td>
+<td style="text-align:right;">
+351
+</td>
+<td style="text-align:left;">
 HALLMARK_ALLOGRAFT_REJECTION
 </td>
 <td style="text-align:right;">
 12
+</td>
+<td style="text-align:right;">
+204
 </td>
 <td style="text-align:right;">
 0.067906
@@ -1661,78 +1696,48 @@ HALLMARK_ALLOGRAFT_REJECTION
 <div id="gsea-module-level" class="section level2">
 <h2>GSEA module-level</h2>
 <p>List genes in each module.</p>
-<pre class="r"><code>gsea.temp &lt;- data.frame()
-
-for(i in 0:max(mods.net$module)){
-  gene.list &lt;- mods.net %&gt;% 
-    filter(module == i) %&gt;% 
-    dplyr::select(geneName) %&gt;% unlist(use.names = FALSE)
-  
-  #Run custom function on genes
-  enrich.fxn(gene.list = gene.list,
-           category = &quot;H&quot;, genome = org.Mm.eg.db,
-           basename=&quot;module_genes&quot;)
-  
-  #### Other gene sets not run ####
-  #enrich.fxn(gene.list = gene.list,
-  #         category = &quot;C5&quot;, genome = org.Mm.eg.db,
-  #         basename=&quot;module_genes&quot;)
-
-  #enrich.fxn(gene.list = gene.list,
-  #         category = &quot;C2&quot;, subcategory = &quot;CGP&quot;, genome = org.Mm.eg.db,
-  #         basename=&quot;module_genes&quot;)
-
-  #enrich.fxn(gene.list = gene.list,
-  #         category = &quot;C2&quot;, subcategory = &quot;CP:KEGG&quot;, 
-  #         genome = org.Mm.eg.db,
-  #         basename=&quot;module_genes&quot;)
-
-  #enrich.fxn(gene.list = gene.list,
-  #         category = &quot;C7&quot;, genome = org.Mm.eg.db,
-  #         basename=&quot;module_genes&quot;)
-  
-  for(file in list.files(path=&quot;results/GSEA/&quot;,
-                         pattern=&quot;module_genes&quot;,
-                         full.names = TRUE)){
-    gsea.temp &lt;- bind_rows(gsea.temp, read_csv(file))
-    
-  }
-  
-  #Add module ID column
-  if(&quot;module&quot; %in% colnames(gsea.temp)){
-    gsea.temp &lt;- gsea.temp %&gt;% 
-                 mutate(module = ifelse(is.na(module), i, module))
-  } else{
-    gsea.temp &lt;- gsea.temp %&gt;% 
-                 mutate(module = i)
-  }
-  
-}
-
-#Save
-for(db in unique(gsea.temp$category)){
-  if(db != &quot;C2&quot;){
-    gsea.sub &lt;- gsea.temp %&gt;% 
-                filter(category == db)
-  
-    filename &lt;- paste(&quot;results/GSEA/GSEA_module_genes_&quot;, 
-                      db, &quot;.csv&quot;, sep=&quot;&quot;)
-    write_csv(gsea.sub, filename)
-  
-  } else{
-    gsea.sub &lt;- gsea.temp %&gt;% 
-                filter(category == db)
-    for(db.sub in unique(gsea.sub$subcategory)){
-      gsea.sub &lt;- gsea.sub %&gt;% 
-                filter(subcategory == db.sub)
-      
-      filename &lt;- paste(&quot;results/GSEA/GSEA_module_genes_&quot;, 
-                      db,&quot;_&quot;, db.sub, &quot;.csv&quot;, sep=&quot;&quot;) %&gt;% 
-        gsub(&quot;:&quot;,&quot;.&quot;,.)
-      write_csv(gsea.sub, filename)
-      }
-  }
-}</code></pre>
+<pre class="r"><code>enrich.fxn(gene.df = mods.net, 
+           df.group=&quot;module.char&quot;,
+           category = &quot;H&quot;,
+           genome = org.Mm.eg.db, 
+           basename = &quot;modules&quot;,
+           outdir = &quot;results/GSEA/&quot;)</code></pre>
+<pre><code>## [1] &quot;02&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:1 mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;01&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;00&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;08&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:1 mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;09&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;06&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;07&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;12&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:1 mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;11&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:1 mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;05&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:1 mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;04&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;03&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;14&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;17&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:1 mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;16&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;13&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:many mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;10&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:1 mapping between keys and columns</code></pre>
+<pre><code>## [1] &quot;15&quot;</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:1 mapping between keys and columns</code></pre>
 <div id="gsea-module-level-summary" class="section level3">
 <h3>GSEA module-level summary</h3>
 <p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.2.</p>
@@ -1742,11 +1747,17 @@ for(db in unique(gsea.temp$category)){
 <th style="text-align:left;">
 Module
 </th>
+<th style="text-align:right;">
+Genes in group
+</th>
 <th style="text-align:left;">
 Description
 </th>
 <th style="text-align:right;">
-Overlap genes
+Genes overlap
+</th>
+<th style="text-align:right;">
+Genes in term
 </th>
 <th style="text-align:right;">
 FDR
@@ -1756,13 +1767,19 @@ FDR
 <tbody>
 <tr>
 <td style="text-align:left;vertical-align: top !important;" rowspan="5">
-1
+01
+</td>
+<td style="text-align:right;vertical-align: top !important;" rowspan="5">
+583
 </td>
 <td style="text-align:left;">
 HALLMARK_OXIDATIVE_PHOSPHORYLATION
 </td>
 <td style="text-align:right;">
 31
+</td>
+<td style="text-align:right;">
+198
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -1774,6 +1791,9 @@ HALLMARK_MYC_TARGETS_V1
 </td>
 <td style="text-align:right;">
 23
+</td>
+<td style="text-align:right;">
+200
 </td>
 <td style="text-align:right;">
 0.0002332
@@ -1787,15 +1807,7 @@ HALLMARK_ADIPOGENESIS
 17
 </td>
 <td style="text-align:right;">
-0.0439996
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-HALLMARK_MTORC1_SIGNALING
-</td>
-<td style="text-align:right;">
-17
+200
 </td>
 <td style="text-align:right;">
 0.0439996
@@ -1809,12 +1821,32 @@ HALLMARK_FATTY_ACID_METABOLISM
 15
 </td>
 <td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
 0.0439996
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-2
+HALLMARK_MTORC1_SIGNALING
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
+0.0439996
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+02
+</td>
+<td style="text-align:right;">
+463
 </td>
 <td style="text-align:left;">
 HALLMARK_MITOTIC_SPINDLE
@@ -1823,18 +1855,27 @@ HALLMARK_MITOTIC_SPINDLE
 27
 </td>
 <td style="text-align:right;">
+199
+</td>
+<td style="text-align:right;">
 0.0000000
 </td>
 </tr>
 <tr>
 <td style="text-align:left;vertical-align: top !important;" rowspan="5">
-3
+03
+</td>
+<td style="text-align:right;vertical-align: top !important;" rowspan="5">
+456
 </td>
 <td style="text-align:left;">
 HALLMARK_OXIDATIVE_PHOSPHORYLATION
 </td>
 <td style="text-align:right;">
 37
+</td>
+<td style="text-align:right;">
+198
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -1848,6 +1889,9 @@ HALLMARK_MYC_TARGETS_V1
 23
 </td>
 <td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
 0.0000143
 </td>
 </tr>
@@ -1857,6 +1901,9 @@ HALLMARK_DNA_REPAIR
 </td>
 <td style="text-align:right;">
 15
+</td>
+<td style="text-align:right;">
+150
 </td>
 <td style="text-align:right;">
 0.0047204
@@ -1870,6 +1917,9 @@ HALLMARK_INTERFERON_ALPHA_RESPONSE
 10
 </td>
 <td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
 0.0411901
 </td>
 </tr>
@@ -1881,18 +1931,27 @@ HALLMARK_UNFOLDED_PROTEIN_RESPONSE
 9
 </td>
 <td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
 0.1875940
 </td>
 </tr>
 <tr>
 <td style="text-align:left;vertical-align: top !important;" rowspan="3">
-4
+04
+</td>
+<td style="text-align:right;vertical-align: top !important;" rowspan="3">
+314
 </td>
 <td style="text-align:left;">
-HALLMARK_PROTEIN_SECRETION
+HALLMARK_PI3K_AKT_MTOR_SIGNALING
 </td>
 <td style="text-align:right;">
 7
+</td>
+<td style="text-align:right;">
+105
 </td>
 <td style="text-align:right;">
 0.0464935
@@ -1900,10 +1959,13 @@ HALLMARK_PROTEIN_SECRETION
 </tr>
 <tr>
 <td style="text-align:left;">
-HALLMARK_PI3K_AKT_MTOR_SIGNALING
+HALLMARK_PROTEIN_SECRETION
 </td>
 <td style="text-align:right;">
 7
+</td>
+<td style="text-align:right;">
+96
 </td>
 <td style="text-align:right;">
 0.0464935
@@ -1917,12 +1979,18 @@ HALLMARK_UNFOLDED_PROTEIN_RESPONSE
 7
 </td>
 <td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
 0.0470334
 </td>
 </tr>
 <tr>
 <td style="text-align:left;vertical-align: top !important;" rowspan="3">
-5
+05
+</td>
+<td style="text-align:right;vertical-align: top !important;" rowspan="3">
+276
 </td>
 <td style="text-align:left;">
 HALLMARK_KRAS_SIGNALING_UP
@@ -1931,18 +1999,10 @@ HALLMARK_KRAS_SIGNALING_UP
 18
 </td>
 <td style="text-align:right;">
+204
+</td>
+<td style="text-align:right;">
 0.0000879
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-HALLMARK_INFLAMMATORY_RESPONSE
-</td>
-<td style="text-align:right;">
-11
-</td>
-<td style="text-align:right;">
-0.1577737
 </td>
 </tr>
 <tr>
@@ -1953,18 +2013,41 @@ HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION
 11
 </td>
 <td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
 0.1577737
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-9
+HALLMARK_INFLAMMATORY_RESPONSE
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+199
+</td>
+<td style="text-align:right;">
+0.1577737
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+09
+</td>
+<td style="text-align:right;">
+164
 </td>
 <td style="text-align:left;">
 HALLMARK_INTERFERON_GAMMA_RESPONSE
 </td>
 <td style="text-align:right;">
 8
+</td>
+<td style="text-align:right;">
+208
 </td>
 <td style="text-align:right;">
 0.0042739
@@ -1974,11 +2057,17 @@ HALLMARK_INTERFERON_GAMMA_RESPONSE
 <td style="text-align:left;">
 11
 </td>
+<td style="text-align:right;">
+127
+</td>
 <td style="text-align:left;">
 HALLMARK_ALLOGRAFT_REJECTION
 </td>
 <td style="text-align:right;">
 7
+</td>
+<td style="text-align:right;">
+204
 </td>
 <td style="text-align:right;">
 0.0802182
@@ -1988,11 +2077,17 @@ HALLMARK_ALLOGRAFT_REJECTION
 <td style="text-align:left;">
 13
 </td>
+<td style="text-align:right;">
+82
+</td>
 <td style="text-align:left;">
 HALLMARK_APOPTOSIS
 </td>
 <td style="text-align:right;">
 4
+</td>
+<td style="text-align:right;">
+161
 </td>
 <td style="text-align:right;">
 0.1593613
@@ -2002,11 +2097,17 @@ HALLMARK_APOPTOSIS
 <td style="text-align:left;vertical-align: top !important;" rowspan="7">
 14
 </td>
+<td style="text-align:right;vertical-align: top !important;" rowspan="7">
+73
+</td>
 <td style="text-align:left;">
 HALLMARK_COMPLEMENT
 </td>
 <td style="text-align:right;">
 4
+</td>
+<td style="text-align:right;">
+197
 </td>
 <td style="text-align:right;">
 0.0744725
@@ -2018,6 +2119,9 @@ HALLMARK_TNFA_SIGNALING_VIA_NFKB
 </td>
 <td style="text-align:right;">
 4
+</td>
+<td style="text-align:right;">
+200
 </td>
 <td style="text-align:right;">
 0.0744725
@@ -2031,6 +2135,9 @@ HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY
 2
 </td>
 <td style="text-align:right;">
+49
+</td>
+<td style="text-align:right;">
 0.1190851
 </td>
 </tr>
@@ -2040,6 +2147,9 @@ HALLMARK_ADIPOGENESIS
 </td>
 <td style="text-align:right;">
 3
+</td>
+<td style="text-align:right;">
+200
 </td>
 <td style="text-align:right;">
 0.1521123
@@ -2053,15 +2163,7 @@ HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION
 3
 </td>
 <td style="text-align:right;">
-0.1521123
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-HALLMARK_MTORC1_SIGNALING
-</td>
-<td style="text-align:right;">
-3
+200
 </td>
 <td style="text-align:right;">
 0.1521123
@@ -2075,6 +2177,23 @@ HALLMARK_IL6_JAK_STAT3_SIGNALING
 2
 </td>
 <td style="text-align:right;">
+88
+</td>
+<td style="text-align:right;">
+0.1521123
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_MTORC1_SIGNALING
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
 0.1521123
 </td>
 </tr>
@@ -2082,11 +2201,17 @@ HALLMARK_IL6_JAK_STAT3_SIGNALING
 <td style="text-align:left;vertical-align: top !important;" rowspan="2">
 15
 </td>
+<td style="text-align:right;vertical-align: top !important;" rowspan="2">
+62
+</td>
 <td style="text-align:left;">
 HALLMARK_ESTROGEN_RESPONSE_LATE
 </td>
 <td style="text-align:right;">
 5
+</td>
+<td style="text-align:right;">
+206
 </td>
 <td style="text-align:right;">
 0.0135542
@@ -2100,6 +2225,9 @@ HALLMARK_ESTROGEN_RESPONSE_EARLY
 4
 </td>
 <td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
 0.0541025
 </td>
 </tr>
@@ -2107,11 +2235,17 @@ HALLMARK_ESTROGEN_RESPONSE_EARLY
 <td style="text-align:left;vertical-align: top !important;" rowspan="2">
 16
 </td>
+<td style="text-align:right;vertical-align: top !important;" rowspan="2">
+58
+</td>
 <td style="text-align:left;">
 HALLMARK_DNA_REPAIR
 </td>
 <td style="text-align:right;">
 4
+</td>
+<td style="text-align:right;">
+150
 </td>
 <td style="text-align:right;">
 0.0548914
@@ -2125,6 +2259,9 @@ HALLMARK_INTERFERON_ALPHA_RESPONSE
 3
 </td>
 <td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
 0.0768660
 </td>
 </tr>
@@ -2132,11 +2269,17 @@ HALLMARK_INTERFERON_ALPHA_RESPONSE
 <td style="text-align:left;vertical-align: top !important;" rowspan="5">
 17
 </td>
+<td style="text-align:right;vertical-align: top !important;" rowspan="5">
+54
+</td>
 <td style="text-align:left;">
 HALLMARK_TNFA_SIGNALING_VIA_NFKB
 </td>
 <td style="text-align:right;">
 9
+</td>
+<td style="text-align:right;">
+200
 </td>
 <td style="text-align:right;">
 0.0000220
@@ -2150,6 +2293,9 @@ HALLMARK_INTERFERON_GAMMA_RESPONSE
 7
 </td>
 <td style="text-align:right;">
+208
+</td>
+<td style="text-align:right;">
 0.0016156
 </td>
 </tr>
@@ -2159,6 +2305,9 @@ HALLMARK_INFLAMMATORY_RESPONSE
 </td>
 <td style="text-align:right;">
 6
+</td>
+<td style="text-align:right;">
+199
 </td>
 <td style="text-align:right;">
 0.0066402
@@ -2172,6 +2321,9 @@ HALLMARK_IL2_STAT5_SIGNALING
 5
 </td>
 <td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
 0.0339295
 </td>
 </tr>
@@ -2181,6 +2333,9 @@ HALLMARK_COMPLEMENT
 </td>
 <td style="text-align:right;">
 4
+</td>
+<td style="text-align:right;">
+197
 </td>
 <td style="text-align:right;">
 0.1371110
@@ -2258,7 +2413,6 @@ mod_0_UI_up &lt;- c(mod_0_UI_up2)
 mod_0_UI_down &lt;- c(mod_0_UI_down2)
 mod_0_I_up &lt;- c(mod_0_I_up2, &quot;ENSMUSG00000024935&quot;,&quot;ENSMUSG00000027534&quot;)
 mod_0_I_down &lt;- c(mod_0_I_down2)
-
 
 #Save lists
 save(mod_0_UI_up, mod_0_UI_down, mod_0_I_up, mod_0_I_down,
@@ -2523,8 +2677,7 @@ down
 </div>
 <div id="run-gsea" class="section level3">
 <h3>Run GSEA</h3>
-<pre class="r"><code>file.remove(&quot;results/GSEA/GSEA_module_groups_H.csv&quot;, showWarnings=FALSE)
-#Add groups to modules
+<pre class="r"><code>#Add groups to modules
 mods.net.groups &lt;- mods.net %&gt;% 
   mutate(mod.group = ifelse(module %in% c(14,7,16,9), &quot;both_up&quot;,
                       ifelse(module %in% c(5,11,17,10,2), &quot;both_down&quot;,
@@ -2535,91 +2688,33 @@ mods.net.groups &lt;- mods.net %&gt;%
                                    NA))))))) %&gt;% 
   filter(module != 0)
 
-for(mod.group.name in c(&quot;both_up&quot;, &quot;both_down&quot;,
-              &quot;UI_up&quot;, &quot;UI_down&quot;, 
-              &quot;I_up&quot;, &quot;I_down&quot;)){
-  
-  from_mods &lt;- mods.net.groups %&gt;% 
-    filter(mod.group == mod.group.name) %&gt;% 
-    dplyr::select(geneName) %&gt;% 
-    distinct() %&gt;% unlist(use.names = FALSE)
-    
-  from_mod0 &lt;- get(paste(&quot;mod_0&quot;, mod.group.name, sep=&quot;_&quot;))
-  
-  gene.list.all &lt;- unique(c(from_mods, from_mod0))
-  
-  #Run custom function on genes
-  enrich.fxn(gene.list = gene.list.all,
-           category = &quot;H&quot;, genome = org.Mm.eg.db,
-           basename=paste(mod.group.name, length(gene.list.all), sep=&quot;_&quot;))
-}
-
-#Combine results
-files &lt;- list.files(path=&quot;results/GSEA/&quot;,
-                         pattern=&quot;down|up&quot;,
-                         full.names = TRUE)
-
-gsea.result3 &lt;- data.frame()
-for(i in 1:length(files)){
-  group.name &lt;- gsub(&quot;results/GSEA//GSEA_&quot;, &quot;&quot;, files[i])
-  group.name &lt;- gsub(&quot;_H.csv&quot;, &quot;&quot;, group.name)
-  group.name &lt;- gsub(&quot;UI_&quot;, &quot;uninfected_&quot;, group.name)
-  group.name &lt;- gsub(&quot;I_&quot;, &quot;infected_&quot;, group.name)
-  
-  gsea.temp &lt;- read_csv(files[i]) %&gt;% 
-    #Add module group name
-    mutate(mod.group = group.name) %&gt;% 
-    #Get number of genes from name
-    separate(mod.group, into=c(&quot;mod.group&quot;,&quot;size.mod.group&quot;), 
-             sep=&quot;_(?=[^_]+$)&quot;) %&gt;% 
-    #Extract values from ratios
-    separate(BgRatio, into=c(&quot;size.term&quot;,&quot;size.category&quot;), sep=&quot;/&quot;) %&gt;% 
-    separate(GeneRatio, into=c(&quot;size.overlap.term&quot;,&quot;size.overlap.category&quot;),
-             sep=&quot;/&quot;) %&gt;% 
-    mutate_at(vars(&quot;size.term&quot;,&quot;size.category&quot;,
-                   &quot;size.overlap.term&quot;,&quot;size.overlap.category&quot;),
-                   as.numeric) %&gt;% 
-    #Calculate k/K
-    mutate(&quot;k/K&quot;=size.overlap.term/size.term) %&gt;% 
-    
-    #Reorder variables
-    dplyr::select(category, mod.group, 
-                  size.mod.group, size.overlap.category, size.category,
-                  Description, size.overlap.term, size.term, `k/K`,
-                  p.adjust, ENTREZIDs:ENSEMBLIDs) %&gt;% 
-    arrange(p.adjust)
-  
- gsea.result3 &lt;- bind_rows(gsea.result3, gsea.temp) 
-}
-
-#Save to disk
-write_csv(gsea.result3, &quot;results/GSEA/GSEA_module_groups_H.csv&quot;)
-
-file.remove(files, showWarnings=FALSE)</code></pre>
+enrich.fxn(gene.df = mods.net.groups, 
+           df.group=&quot;mod.group&quot;,
+           category = &quot;H&quot;,
+           genome = org.Mm.eg.db, 
+           basename = &quot;module_groups&quot;,
+           outdir = &quot;results/GSEA/&quot;)</code></pre>
 </div>
 <div id="gsea-module-group-summary" class="section level3">
 <h3>GSEA module group summary</h3>
-<p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.2.</p>
+<p>Significant enrichments, FDR <span class="math inline">\(\leq\)</span> 0.3.</p>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
 <th style="text-align:left;">
-Module group
+Module
 </th>
-<th style="text-align:left;">
-Genes in module group
+<th style="text-align:right;">
+Genes in group
 </th>
 <th style="text-align:left;">
 Description
 </th>
 <th style="text-align:right;">
-Genes in overlap (k)
+Genes overlap
 </th>
 <th style="text-align:right;">
-Genes in term (K)
-</th>
-<th style="text-align:right;">
-k/K
+Genes in term
 </th>
 <th style="text-align:right;">
 FDR
@@ -2628,10 +2723,10 @@ FDR
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+<td style="text-align:left;vertical-align: top !important;" rowspan="8">
 both_down
 </td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="5">
+<td style="text-align:right;vertical-align: top !important;" rowspan="8">
 1071
 </td>
 <td style="text-align:left;">
@@ -2644,27 +2739,7 @@ HALLMARK_MITOTIC_SPINDLE
 199
 </td>
 <td style="text-align:right;">
-0.1909548
-</td>
-<td style="text-align:right;">
 0.0000160
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-HALLMARK_INFLAMMATORY_RESPONSE
-</td>
-<td style="text-align:right;">
-28
-</td>
-<td style="text-align:right;">
-199
-</td>
-<td style="text-align:right;">
-0.1407035
-</td>
-<td style="text-align:right;">
-0.0490483
 </td>
 </tr>
 <tr>
@@ -2678,7 +2753,18 @@ HALLMARK_HYPOXIA
 201
 </td>
 <td style="text-align:right;">
-0.1393035
+0.0490483
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_INFLAMMATORY_RESPONSE
+</td>
+<td style="text-align:right;">
+28
+</td>
+<td style="text-align:right;">
+199
 </td>
 <td style="text-align:right;">
 0.0490483
@@ -2695,9 +2781,6 @@ HALLMARK_KRAS_SIGNALING_UP
 204
 </td>
 <td style="text-align:right;">
-0.1323529
-</td>
-<td style="text-align:right;">
 0.0881643
 </td>
 </tr>
@@ -2712,53 +2795,58 @@ HALLMARK_ALLOGRAFT_REJECTION
 204
 </td>
 <td style="text-align:right;">
-0.1274510
-</td>
-<td style="text-align:right;">
 0.1306612
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="4">
-both_up
-</td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="4">
-517
-</td>
 <td style="text-align:left;">
-HALLMARK_TNFA_SIGNALING_VIA_NFKB
+HALLMARK_GLYCOLYSIS
 </td>
 <td style="text-align:right;">
-14
+24
 </td>
 <td style="text-align:right;">
 200
 </td>
 <td style="text-align:right;">
-0.0700000
-</td>
-<td style="text-align:right;">
-0.0533466
+0.2306566
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-HALLMARK_XENOBIOTIC_METABOLISM
+HALLMARK_IL2_STAT5_SIGNALING
 </td>
 <td style="text-align:right;">
-14
+24
 </td>
 <td style="text-align:right;">
-202
+200
 </td>
 <td style="text-align:right;">
-0.0693069
-</td>
-<td style="text-align:right;">
-0.0533466
+0.2306566
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+HALLMARK_INTERFERON_GAMMA_RESPONSE
+</td>
+<td style="text-align:right;">
+24
+</td>
+<td style="text-align:right;">
+208
+</td>
+<td style="text-align:right;">
+0.2999434
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="6">
+both_up
+</td>
+<td style="text-align:right;vertical-align: top !important;" rowspan="8">
+514
+</td>
 <td style="text-align:left;">
 HALLMARK_INTERFERON_GAMMA_RESPONSE
 </td>
@@ -2769,10 +2857,7 @@ HALLMARK_INTERFERON_GAMMA_RESPONSE
 208
 </td>
 <td style="text-align:right;">
-0.0673077
-</td>
-<td style="text-align:right;">
-0.0533466
+0.0704099
 </td>
 </tr>
 <tr>
@@ -2786,30 +2871,111 @@ HALLMARK_TGF_BETA_SIGNALING
 54
 </td>
 <td style="text-align:right;">
-0.1111111
-</td>
-<td style="text-align:right;">
-0.0611588
+0.0704099
 </td>
 </tr>
 <tr>
-<td style="text-align:left;vertical-align: top !important;" rowspan="7">
-infected_up
+<td style="text-align:left;">
+HALLMARK_TNFA_SIGNALING_VIA_NFKB
 </td>
-<td style="text-align:left;vertical-align: top !important;" rowspan="7">
-1199
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
+0.0704099
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_XENOBIOTIC_METABOLISM
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+202
+</td>
+<td style="text-align:right;">
+0.0704099
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_ADIPOGENESIS
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
+0.2722935
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_INTERFERON_ALPHA_RESPONSE
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+102
+</td>
+<td style="text-align:right;">
+0.2722935
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="2">
+I_down
+</td>
+<td style="text-align:left;">
+HALLMARK_PI3K_AKT_MTOR_SIGNALING
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:right;">
+105
+</td>
+<td style="text-align:right;">
+0.2497740
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_PROTEIN_SECRETION
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+96
+</td>
+<td style="text-align:right;">
+0.2497740
+</td>
+</tr>
+<tr>
+<td style="text-align:left;vertical-align: top !important;" rowspan="10">
+I_up
+</td>
+<td style="text-align:right;vertical-align: top !important;" rowspan="10">
+1039
 </td>
 <td style="text-align:left;">
 HALLMARK_OXIDATIVE_PHOSPHORYLATION
 </td>
 <td style="text-align:right;">
-71
+68
 </td>
 <td style="text-align:right;">
 198
-</td>
-<td style="text-align:right;">
-0.3585859
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -2820,13 +2986,10 @@ HALLMARK_OXIDATIVE_PHOSPHORYLATION
 HALLMARK_MYC_TARGETS_V1
 </td>
 <td style="text-align:right;">
-48
+46
 </td>
 <td style="text-align:right;">
 200
-</td>
-<td style="text-align:right;">
-0.2400000
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -2837,16 +3000,13 @@ HALLMARK_MYC_TARGETS_V1
 HALLMARK_ADIPOGENESIS
 </td>
 <td style="text-align:right;">
-32
+30
 </td>
 <td style="text-align:right;">
 200
 </td>
 <td style="text-align:right;">
-0.1600000
-</td>
-<td style="text-align:right;">
-0.0081864
+0.0066217
 </td>
 </tr>
 <tr>
@@ -2854,16 +3014,13 @@ HALLMARK_ADIPOGENESIS
 HALLMARK_INTERFERON_ALPHA_RESPONSE
 </td>
 <td style="text-align:right;">
-19
+18
 </td>
 <td style="text-align:right;">
 102
 </td>
 <td style="text-align:right;">
-0.1862745
-</td>
-<td style="text-align:right;">
-0.0112073
+0.0109622
 </td>
 </tr>
 <tr>
@@ -2871,16 +3028,13 @@ HALLMARK_INTERFERON_ALPHA_RESPONSE
 HALLMARK_DNA_REPAIR
 </td>
 <td style="text-align:right;">
-25
+23
 </td>
 <td style="text-align:right;">
 150
 </td>
 <td style="text-align:right;">
-0.1666667
-</td>
-<td style="text-align:right;">
-0.0112073
+0.0137948
 </td>
 </tr>
 <tr>
@@ -2888,16 +3042,13 @@ HALLMARK_DNA_REPAIR
 HALLMARK_INTERFERON_GAMMA_RESPONSE
 </td>
 <td style="text-align:right;">
-28
+27
 </td>
 <td style="text-align:right;">
 208
 </td>
 <td style="text-align:right;">
-0.1346154
-</td>
-<td style="text-align:right;">
-0.1092880
+0.0530819
 </td>
 </tr>
 <tr>
@@ -2905,16 +3056,75 @@ HALLMARK_INTERFERON_GAMMA_RESPONSE
 HALLMARK_MTORC1_SIGNALING
 </td>
 <td style="text-align:right;">
-26
+25
 </td>
 <td style="text-align:right;">
 200
 </td>
 <td style="text-align:right;">
-0.1300000
+0.0958830
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_REACTIVE_OXYGEN_SPECIES_PATHWAY
 </td>
 <td style="text-align:right;">
-0.1764292
+8
+</td>
+<td style="text-align:right;">
+49
+</td>
+<td style="text-align:right;">
+0.2181156
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_FATTY_ACID_METABOLISM
+</td>
+<td style="text-align:right;">
+19
+</td>
+<td style="text-align:right;">
+160
+</td>
+<td style="text-align:right;">
+0.2505872
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+HALLMARK_UNFOLDED_PROTEIN_RESPONSE
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+113
+</td>
+<td style="text-align:right;">
+0.2904384
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UI_up
+</td>
+<td style="text-align:right;">
+144
+</td>
+<td style="text-align:left;">
+HALLMARK_ESTROGEN_RESPONSE_EARLY
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
+0.2114580
 </td>
 </tr>
 </tbody>
@@ -2941,7 +3151,7 @@ HALLMARK_MTORC1_SIGNALING
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] org.Hs.eg.db_3.8.2     msigdbr_7.0.1          clusterProfiler_3.12.0
+##  [1] plyr_1.8.6             msigdbr_7.0.1          clusterProfiler_3.12.0
 ##  [4] org.Mm.eg.db_3.8.2     AnnotationDbi_1.46.1   IRanges_2.18.3        
 ##  [7] S4Vectors_0.22.1       Biobase_2.44.0         BiocGenerics_0.30.0   
 ## [10] kableExtra_1.1.0       knitr_1.28             forcats_0.5.0         
@@ -2974,15 +3184,15 @@ HALLMARK_MTORC1_SIGNALING
 ## [64] stringi_1.4.6       RSQLite_2.2.0       highr_0.8          
 ## [67] BiocParallel_1.18.1 rlang_0.4.6         pkgconfig_2.0.3    
 ## [70] evaluate_0.14       lattice_0.20-41     cowplot_1.0.0      
-## [73] bit_1.1-15.2        tidyselect_1.0.0    plyr_1.8.6         
-## [76] magrittr_1.5        R6_2.4.1            generics_0.0.2     
-## [79] DBI_1.1.0           pillar_1.4.4        haven_2.2.0        
-## [82] withr_2.2.0         modelr_0.1.7        crayon_1.3.4       
-## [85] rmarkdown_2.1       viridis_0.5.1       progress_1.2.2     
-## [88] grid_3.6.1          readxl_1.3.1        data.table_1.12.8  
-## [91] blob_1.2.1          reprex_0.3.0        digest_0.6.25      
-## [94] webshot_0.5.2       gridGraphics_0.5-0  munsell_0.5.0      
-## [97] viridisLite_0.3.0   ggplotify_0.0.5</code></pre>
+## [73] bit_1.1-15.2        tidyselect_1.0.0    magrittr_1.5       
+## [76] R6_2.4.1            generics_0.0.2      DBI_1.1.0          
+## [79] pillar_1.4.4        haven_2.2.0         withr_2.2.0        
+## [82] modelr_0.1.7        crayon_1.3.4        rmarkdown_2.1      
+## [85] viridis_0.5.1       progress_1.2.2      grid_3.6.1         
+## [88] readxl_1.3.1        data.table_1.12.8   blob_1.2.1         
+## [91] reprex_0.3.0        digest_0.6.25       webshot_0.5.2      
+## [94] gridGraphics_0.5-0  munsell_0.5.0       viridisLite_0.3.0  
+## [97] ggplotify_0.0.5</code></pre>
 <hr />
 </div>
 

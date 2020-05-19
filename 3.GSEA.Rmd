@@ -50,7 +50,7 @@ mods.net <- read_csv("results/module_Shah_contrast_deepSplit3_minMod50/Shah_cont
 #Genome
 library(org.Mm.eg.db)
 #Script for running GSEA
-source("scripts/GSEA_enricher.R")
+source("https://raw.githubusercontent.com/kdillmcfarland/R_bioinformatic_scripts/master/GSEA_enricher_loop.R")
 ```
 
 # Gene set enrichment analysis (GSEA)
@@ -88,7 +88,7 @@ gene.list <- Shah_contrast_gene_pval %>%
 
 ```{r warning=FALSE, message=FALSE, results=FALSE}
 #Run custom function on genes
-enrich.fxn(gene.list = gene.list,
+enrich.fxn(gene.list = list(contrast_signif_genes=gene.list),
            category = "H", genome = org.Mm.eg.db,
            basename="contrast_signif_genes")
 
@@ -115,96 +115,34 @@ enrich.fxn(gene.list = gene.list,
 Significant enrichments, FDR $\leq$ 0.2.
 
 ```{r warning=FALSE, echo=FALSE}
-GSEA.results <- bind_rows(mget(ls(pattern="contrast_signif_genes"))) %>% 
-  dplyr::select(Description, Count, p.adjust, category) %>% 
-  arrange(category, desc(Count))
-  
+GSEA.results <- read_csv("results/GSEA/GSEA_contrast_signif_genes_H.csv") 
+
 GSEA.results %>% 
   filter(p.adjust<=0.2) %>% 
-  dplyr::select(-category) %>% 
+  dplyr::select(group, size.group,
+    Description, size.overlap.term, size.term, 
+    p.adjust) %>% 
+  arrange(group, p.adjust) %>% 
   
-  kable(col.names = c("Description", "Overlap genes",
+  kable(col.names = c("Group", "Genes in group",
+                      "Description", "Genes overlap",
+                      "Genes in term",
                       "FDR")) %>% 
-  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+  kable_styling(bootstrap_options = "striped", full_width = FALSE) %>% 
+  collapse_rows(1:3, valign="top")
 ```
 
 ## GSEA module-level
 
 List genes in each module.
 
-```{r warning=FALSE, message=FALSE, results=FALSE}
-gsea.temp <- data.frame()
-
-for(i in 0:max(mods.net$module)){
-  gene.list <- mods.net %>% 
-    filter(module == i) %>% 
-    dplyr::select(geneName) %>% unlist(use.names = FALSE)
-  
-  #Run custom function on genes
-  enrich.fxn(gene.list = gene.list,
-           category = "H", genome = org.Mm.eg.db,
-           basename="module_genes")
-  
-  #### Other gene sets not run ####
-  #enrich.fxn(gene.list = gene.list,
-  #         category = "C5", genome = org.Mm.eg.db,
-  #         basename="module_genes")
-
-  #enrich.fxn(gene.list = gene.list,
-  #         category = "C2", subcategory = "CGP", genome = org.Mm.eg.db,
-  #         basename="module_genes")
-
-  #enrich.fxn(gene.list = gene.list,
-  #         category = "C2", subcategory = "CP:KEGG", 
-  #         genome = org.Mm.eg.db,
-  #         basename="module_genes")
-
-  #enrich.fxn(gene.list = gene.list,
-  #         category = "C7", genome = org.Mm.eg.db,
-  #         basename="module_genes")
-  
-  for(file in list.files(path="results/GSEA/",
-                         pattern="module_genes",
-                         full.names = TRUE)){
-    gsea.temp <- bind_rows(gsea.temp, read_csv(file))
-    
-  }
-  
-  #Add module ID column
-  if("module" %in% colnames(gsea.temp)){
-    gsea.temp <- gsea.temp %>% 
-                 mutate(module = ifelse(is.na(module), i, module))
-  } else{
-    gsea.temp <- gsea.temp %>% 
-                 mutate(module = i)
-  }
-  
-}
-
-#Save
-for(db in unique(gsea.temp$category)){
-  if(db != "C2"){
-    gsea.sub <- gsea.temp %>% 
-                filter(category == db)
-  
-    filename <- paste("results/GSEA/GSEA_module_genes_", 
-                      db, ".csv", sep="")
-    write_csv(gsea.sub, filename)
-  
-  } else{
-    gsea.sub <- gsea.temp %>% 
-                filter(category == db)
-    for(db.sub in unique(gsea.sub$subcategory)){
-      gsea.sub <- gsea.sub %>% 
-                filter(subcategory == db.sub)
-      
-      filename <- paste("results/GSEA/GSEA_module_genes_", 
-                      db,"_", db.sub, ".csv", sep="") %>% 
-        gsub(":",".",.)
-      write_csv(gsea.sub, filename)
-      }
-  }
-}
+```{r}
+enrich.fxn(gene.df = mods.net, 
+           df.group="module.char",
+           category = "H",
+           genome = org.Mm.eg.db, 
+           basename = "modules",
+           outdir = "results/GSEA/")
 ```
 
 ### GSEA module-level summary
@@ -212,25 +150,21 @@ for(db in unique(gsea.temp$category)){
 Significant enrichments, FDR $\leq$ 0.2.
 
 ```{r warning=FALSE, echo=FALSE, message=FALSE}
-file <- list.files(path="results/GSEA/", pattern="module_genes",
-                    full.names = TRUE)
-
-GSEA.results2 <- read_csv(file) %>% 
-  dplyr::select(Description, Count, p.adjust, category,
-                module) %>% 
-  arrange(category, desc(Count))
+GSEA.results2 <- read_csv("results/GSEA/GSEA_modules_H.csv")
   
 GSEA.results2 %>% 
-  mutate(module=factor(module)) %>% 
   filter(p.adjust<=0.2) %>% 
-  group_by(module, .drop = FALSE) %>% 
-  dplyr::select(module, everything(), -category) %>% 
-  arrange(module, p.adjust) %>% 
+  dplyr::select(group, size.group,
+    Description, size.overlap.term, size.term, 
+    p.adjust) %>% 
+  arrange(group, p.adjust) %>% 
   
-  kable(col.names = c("Module", "Description",
-                      "Overlap genes", "FDR")) %>% 
+  kable(col.names = c("Module", "Genes in group",
+                      "Description", "Genes overlap",
+                      "Genes in term",
+                      "FDR")) %>% 
   kable_styling(bootstrap_options = "striped", full_width = FALSE) %>% 
-  collapse_rows(columns = 1, valign = "top")
+  collapse_rows(1:2, valign="top")
 ```
 
 ## GSEA module DE groups
@@ -330,7 +264,6 @@ missing %>%
 ### Run GSEA
 
 ```{r warning=FALSE, message=FALSE, results=FALSE}
-file.remove("results/GSEA/GSEA_module_groups_H.csv", showWarnings=FALSE)
 #Add groups to modules
 mods.net.groups <- mods.net %>% 
   mutate(mod.group = ifelse(module %in% c(14,7,16,9), "both_up",
@@ -342,86 +275,34 @@ mods.net.groups <- mods.net %>%
                                    NA))))))) %>% 
   filter(module != 0)
 
-for(mod.group.name in c("both_up", "both_down",
-              "UI_up", "UI_down", 
-              "I_up", "I_down")){
-  
-  from_mods <- mods.net.groups %>% 
-    filter(mod.group == mod.group.name) %>% 
-    dplyr::select(geneName) %>% 
-    distinct() %>% unlist(use.names = FALSE)
-    
-  from_mod0 <- get(paste("mod_0", mod.group.name, sep="_"))
-  
-  gene.list.all <- unique(c(from_mods, from_mod0))
-  
-  #Run custom function on genes
-  enrich.fxn(gene.list = gene.list.all,
-           category = "H", genome = org.Mm.eg.db,
-           basename=paste(mod.group.name, length(gene.list.all), sep="_"))
-}
-
-#Combine results
-files <- list.files(path="results/GSEA/",
-                         pattern="down|up",
-                         full.names = TRUE)
-
-gsea.result3 <- data.frame()
-for(i in 1:length(files)){
-  group.name <- gsub("results/GSEA//GSEA_", "", files[i])
-  group.name <- gsub("_H.csv", "", group.name)
-  group.name <- gsub("UI_", "uninfected_", group.name)
-  group.name <- gsub("I_", "infected_", group.name)
-  
-  gsea.temp <- read_csv(files[i]) %>% 
-    #Add module group name
-    mutate(mod.group = group.name) %>% 
-    #Get number of genes from name
-    separate(mod.group, into=c("mod.group","size.mod.group"), 
-             sep="_(?=[^_]+$)") %>% 
-    #Extract values from ratios
-    separate(BgRatio, into=c("size.term","size.category"), sep="/") %>% 
-    separate(GeneRatio, into=c("size.overlap.term","size.overlap.category"),
-             sep="/") %>% 
-    mutate_at(vars("size.term","size.category",
-                   "size.overlap.term","size.overlap.category"),
-                   as.numeric) %>% 
-    #Calculate k/K
-    mutate("k/K"=size.overlap.term/size.term) %>% 
-    
-    #Reorder variables
-    dplyr::select(category, mod.group, 
-                  size.mod.group, size.overlap.category, size.category,
-                  Description, size.overlap.term, size.term, `k/K`,
-                  p.adjust, ENTREZIDs:ENSEMBLIDs) %>% 
-    arrange(p.adjust)
-  
- gsea.result3 <- bind_rows(gsea.result3, gsea.temp) 
-}
-
-#Save to disk
-write_csv(gsea.result3, "results/GSEA/GSEA_module_groups_H.csv")
-
-file.remove(files, showWarnings=FALSE)
+enrich.fxn(gene.df = mods.net.groups, 
+           df.group="mod.group",
+           category = "H",
+           genome = org.Mm.eg.db, 
+           basename = "module_groups",
+           outdir = "results/GSEA/")
 ```
 
 ### GSEA module group summary
 
-Significant enrichments, FDR $\leq$ 0.2.
+Significant enrichments, FDR $\leq$ 0.3.
 
 ```{r warning=FALSE, echo=FALSE, message=FALSE}
-gsea.result3 %>% 
-  filter(p.adjust<=0.2) %>% 
-  arrange(mod.group) %>%
-  dplyr::select(mod.group, size.mod.group,
-                Description:p.adjust) %>% 
- 
-  kable(col.names = c("Module group", "Genes in module group",
-                      "Description", "Genes in overlap (k)", 
-                      "Genes in term (K)", "k/K",
+GSEA.result3 <- read_csv("results/GSEA/GSEA_module_groups_H.csv")
+
+GSEA.result3 %>% 
+  filter(p.adjust<=0.3) %>% 
+  dplyr::select(group, size.group,
+    Description, size.overlap.term, size.term, 
+    p.adjust) %>% 
+  arrange(group, p.adjust) %>% 
+  
+  kable(col.names = c("Module", "Genes in group",
+                      "Description", "Genes overlap",
+                      "Genes in term",
                       "FDR")) %>% 
   kable_styling(bootstrap_options = "striped", full_width = FALSE) %>% 
-  collapse_rows(columns = 1:2, valign = "top")
+  collapse_rows(1:2, valign="top")
 ```
 
 # R session
