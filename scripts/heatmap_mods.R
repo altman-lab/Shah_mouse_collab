@@ -298,3 +298,74 @@ draw(Heatmap(hallmark_sub, name = "Propotion of\ngenes in module",
              column_names_gp = gpar(fontsize = 8)))
 dev.off()
 
+#### 4 group summary, remove mod 0 ####
+counts.sub <- counts.all %>% 
+  #Remove module 0 and splits
+  filter(!grepl("mod_0_", module) & module != "mod_00") %>% 
+  pivot_longer(-module, names_to = "rowname") %>% 
+  left_join(rownames_to_column(meta)) %>% 
+  select(-rowname) %>% 
+  #calculate mean w/in group
+  group_by(module, status, cell) %>% 
+  summarize(count.mean = mean(value, na.rm=TRUE)) %>% 
+  ungroup() %>% 
+  
+  #wide format
+  mutate(group = paste(status, cell, sep="_"),
+         group = factor(group, levels=c("Uninfected_WT",
+                                        "Uninfected_TKO",
+                                        "Infected_WT",
+                                        "Infected_TKO"))) %>% 
+  arrange(group) %>% 
+  select(module, group, count.mean) %>% 
+  pivot_wider(names_from = group, values_from = count.mean) %>% 
+  
+  #format to matrix
+  column_to_rownames("module") %>% 
+  as.matrix()
+
+#### Tree
+corr.pv <- pvclust(t(counts.sub), nboot=1000, 
+                   method.hclust="average", method.dist="correlation")
+#au = Approximately Unbiased p-value 
+#bp = Bootstrap Probability
+pdf(file = "figs/heatmap/heatmap_modules.4groups_tree.pdf", 
+    height=8, width=10)
+plot(corr.pv)
+dev.off()
+
+#### Row (module) annotation
+row_annot <- row_annot_df %>% 
+  #Remove module 0 and splits
+  filter(!grepl("mod_0_", module) & module != "mod_00") %>% 
+  #Format
+  column_to_rownames("module") %>% 
+  rowAnnotation(df=., col=list("Infected" = c("up"="#ca0020",
+                                              "NS"="white",
+                                              "down"="#0571b0"),
+                               "Uninfected" = c("up"="#ca0020",
+                                                "NS"="white",
+                                                "down"="#0571b0")),
+                show_legend=c(TRUE,FALSE),
+                annotation_legend_param = list(Uninfected = 
+                                                 list(title = "Significant\nfold change")))
+
+#### heatmap 
+pdf(file = "figs/heatmap/heatmap_modules.4groups.pdf", 
+    height=10, width=6)
+
+draw(Heatmap(counts.sub, name = "Module log2\nexpression",
+             #Expression colors
+             col = magma(20),
+             #Sample annot
+             cluster_columns = FALSE,
+             column_split = c("Uninfected","Uninfected",
+                              "Infected","Infected"),
+             column_gap = unit(5, "mm"),
+             #Module annot
+             right_annotation = row_annot,
+             cluster_rows = corr.pv$hclust,
+             row_split = 2, row_gap = unit(5, "mm"),
+             row_dend_width = unit(3, "cm")))
+dev.off()
+
