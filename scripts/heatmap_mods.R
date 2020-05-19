@@ -324,6 +324,13 @@ counts.sub <- counts.all %>%
   column_to_rownames("module") %>% 
   as.matrix()
 
+meta2 <- meta %>% 
+  mutate(group = paste(status, cell, sep="_")) %>% 
+  arrange(group) %>% 
+  distinct() %>% 
+  column_to_rownames("group") %>% 
+  as.matrix()
+
 #### Tree
 corr.pv <- pvclust(t(counts.sub), nboot=1000, 
                    method.hclust="average", method.dist="correlation")
@@ -352,15 +359,14 @@ row_annot <- row_annot_df %>%
 
 #### heatmap 
 pdf(file = "figs/heatmap/heatmap_modules.4groups.pdf", 
-    height=10, width=6)
+    height=6, width=5)
 
 draw(Heatmap(counts.sub, name = "Module log2\nexpression",
              #Expression colors
              col = magma(20),
              #Sample annot
              cluster_columns = FALSE,
-             column_split = c("Uninfected","Uninfected",
-                              "Infected","Infected"),
+             column_split = c(1,1,2,2),
              column_gap = unit(5, "mm"),
              #Module annot
              right_annotation = row_annot,
