@@ -227,4 +227,74 @@ draw(Heatmap(counts.sub, name = "Module log2\nexpression",
              row_dend_width = unit(3, "cm")))
 dev.off()
 
-##### 
+##### Hallmark names #####
+
+hallmark <- read_csv("results/GSEA/GSEA_modules_H.csv") 
+
+#Calculate percent of genes in term
+hallmark_pct <- hallmark %>% 
+  #remove mod 0
+  filter(group != "00") %>% 
+  #Calculate proportion of genes in term
+  select(group, Description, size.overlap.term, 
+         size.group, p.adjust) %>% 
+  mutate(pct = size.overlap.term/size.group*100) %>% 
+  #Format labels
+  mutate(group = paste("mod",group, sep="_"),
+         Description = gsub("HALLMARK_","",Description))
+
+#list terms with at least 1 module FDR < 0.5
+hallmark_summ <- hallmark_pct %>% 
+  group_by(Description) %>% 
+  summarize(pct.max=max(pct), fdr.min = min(p.adjust)) %>% 
+  arrange(-fdr.min)
+
+terms.to.keep <- hallmark_summ %>% 
+  filter(fdr.min<=0.3) %>% 
+  select(Description) %>% unlist(use.names = FALSE)
+
+hallmark_sub <- hallmark_pct %>% 
+  filter(Description %in% terms.to.keep) %>% 
+  #Wide format
+  select(group, Description, pct) %>% 
+  pivot_wider(names_from = Description, values_from = pct) %>% 
+  arrange(group) %>% 
+  #Fill NAs
+  mutate_if(is.numeric, ~ifelse(is.na(.),0,.)) %>% 
+  #To matrix
+  column_to_rownames("group") %>% 
+  as.matrix()
+  
+#### Row (module) annotation
+row_annot <- row_annot_df %>% 
+  #Remove module 0 and splits
+  filter(!grepl("mod_0_", module) & module != "mod_00") %>% 
+  #Format
+  column_to_rownames("module") %>% 
+  rowAnnotation(df=., col=list("Infected" = c("up"="#ca0020",
+                                              "NS"="white",
+                                              "down"="#0571b0"),
+                               "Uninfected" = c("up"="#ca0020",
+                                                "NS"="white",
+                                                "down"="#0571b0")),
+                show_legend=c(TRUE,FALSE),
+                annotation_legend_param = list(Uninfected = 
+                                                 list(title = "Significant\nfold change")))
+
+#### heatmap 
+pdf(file = "figs/heatmap/heatmap_hallmark.remove0.pdf", 
+    height=10, width=15)
+
+draw(Heatmap(hallmark_sub, name = "Propotion of\ngenes in module",
+             #Expression colors
+             col = magma(20),
+             #Sample annot
+             cluster_columns = TRUE,
+             #Module annot
+             right_annotation = row_annot,
+             cluster_rows = corr.pv$hclust,
+             row_split = 2, row_gap = unit(5, "mm"),
+             row_dend_width = unit(3, "cm"),
+             column_names_gp = gpar(fontsize = 8)))
+dev.off()
+
