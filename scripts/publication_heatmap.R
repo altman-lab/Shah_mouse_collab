@@ -175,6 +175,12 @@ col_annot <- HeatmapAnnotation(
   Infected =  anno_simple(col_annot.df$Infected,
                           col = c("Up"="#ca0020", "Down"="#0571b0"), 
                           na_col = "white"),
+  "Total genes" = anno_simple(col_annot.df$n,
+                              col=circlize::colorRamp2(c(0, 600),
+                                                       c("white", "darkgrey"))),
+  "Total genes2" = anno_text(col_annot.df$n, rot=0, just="center",
+                             location = unit(2, "npc")))
+
 #### heatmap ####
 hallmark_hm <- Heatmap(t(hallmark_sub), name = "Percent genes\nin module",
                        #Expression colors
