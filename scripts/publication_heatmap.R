@@ -59,7 +59,7 @@ corr.pv <- pvclust(t(counts.sub), nboot=1000,
                    method.hclust="average", method.dist="correlation")
 
 #### column (module) annotation ####
-col_annot <- data.frame(module = counts$module) %>% 
+col_annot.df <- data.frame(module = counts$module) %>% 
   mutate(Uninfected = 
            ifelse(module %in% c("14","07","16","09","13","15"),
                   "Up",
@@ -74,18 +74,22 @@ col_annot <- data.frame(module = counts$module) %>%
                          NA))) %>% 
   #Remove module 0 
   filter(module != "00") %>% 
-  #Format
-  column_to_rownames("module") %>% 
-  HeatmapAnnotation(df=., col=list("Infected" = c("Up"="#ca0020",
-                                             
-                                              "Down"="#0571b0"),
-                               "Uninfected" = c("Up"="#ca0020",
-                                               
-                                                "Down"="#0571b0")),
-                show_legend=c(TRUE,FALSE),
-                annotation_legend_param = list(Uninfected = 
-                                      list(title = "Significant\nfold change")),
-                na_col = "white")
+  #Add total genes in module
+  left_join(count(read_csv(
+    "results/module_Shah_contrast_deepSplit3_minMod50/Shah_contrast_genes_in_mod.csv"),
+    module.char) , by=c("module"="module.char"))
+
+col_annot <- HeatmapAnnotation(
+  Uninfected =  anno_simple(col_annot.df$Uninfected,
+                            col = c("Up"="#ca0020", "Down"="#0571b0"), 
+                            na_col = "white"),
+  Infected =  anno_simple(col_annot.df$Infected,
+                          col = c("Up"="#ca0020", "Down"="#0571b0"), 
+                          na_col = "white"))
+
+col_legend <- Legend(title = "Significant\nfold change",
+                     legend_gp = gpar(fill = c("#ca0020", "#0571b0")),
+                     labels = c("Up","Down"))
 
 #### heatmap ####
 rowNames <- c(expression(Infected~italic(Tollip^"-/-")),
@@ -119,7 +123,7 @@ mod_hm <- Heatmap(t(counts.sub), name = "Mean log2\nexpression",
 pdf(file = "figs/publication/heatmap_modules.4groups.pdf", 
     height=6, width=12)
 
-draw(mod_hm)
+draw(mod_hm, annotation_legend_list=list(col_legend))
 dev.off()
 
 ##### HALLMARK #####
@@ -163,6 +167,14 @@ hallmark_sub <- hallmark_pct %>%
   column_to_rownames("group") %>% 
   as.matrix()
 
+#### Column anno ####
+col_annot <- HeatmapAnnotation(
+  Uninfected =  anno_simple(col_annot.df$Uninfected,
+                            col = c("Up"="#ca0020", "Down"="#0571b0"), 
+                            na_col = "white"),
+  Infected =  anno_simple(col_annot.df$Infected,
+                          col = c("Up"="#ca0020", "Down"="#0571b0"), 
+                          na_col = "white"),
 #### heatmap ####
 hallmark_hm <- Heatmap(t(hallmark_sub), name = "Percent genes\nin module",
                        #Expression colors
@@ -185,6 +197,6 @@ pdf(file = paste("figs/publication/heatmap_hallmark_FDR",
                  FDR.cutoff, ".pdf", sep=""), 
     height=9, width=12)
 
-draw(hallmark_hm)
+draw(hallmark_hm, annotation_legend_list=list(col_legend))
 
 dev.off()
