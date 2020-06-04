@@ -194,6 +194,8 @@ hallmark_hm <- Heatmap(t(hallmark_sub), name = "Percent genes\nin module",
                        column_names_rot = 0,
                        column_title = " ",
                        column_names_centered = TRUE,
+                       #Rows
+                       clustering_method_rows = "average",
                        #Force square
                        heatmap_height = unit(22, "cm"),
                        heatmap_width = unit(24, "cm"))
