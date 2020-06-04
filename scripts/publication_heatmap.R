@@ -99,6 +99,7 @@ mod_hm <- Heatmap(t(counts.sub), name = "Mean log2\nexpression",
                   #Sample annot
                   row_split = c(2,2,1,1),
                   row_gap = unit(5, "mm"),
+                  show_row_dend = FALSE,
                   row_title = " ",
                   row_labels = rowNames,
                   #Module annot
